@@ -4,13 +4,10 @@ version = "0.1.0"
 description = "e-Stat dataset for fdl"
 requires-python = ">=3.13"
 dependencies = [
-    "fdl",
+    "frozen-ducklake",
     "dbt-core>=1.10.0",
     "dbt-duckdb>=1.10.0",
     "dlt[ducklake]>=1.17.0",
     "estat-api-dlt-helper>=0.3.0",
     "pyyaml>=6.0",
 ]
-
-[tool.uv.sources]
-fdl = { git = "https://github.com/flo8s/fdl", tag = "v0.2.0" }
