@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# dbt
+target/
+dbt_packages/
+dbt_internal_packages/
+logs/
+.user.yml
+package-lock.yml
+
+# DuckLake
+.fdl/
+
+# Environment
+.env
+

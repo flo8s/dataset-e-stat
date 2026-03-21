@@ -1,0 +1,93 @@
+version: 2
+
+_columns: &columns
+  - name: tab
+    description: 表章項目コード
+  - name: cat01
+    description: 分類事項コード
+  - name: area
+    description: 地域コード
+  - name: time
+    description: 時間軸コード
+  - name: unit
+    description: 単位
+  - name: value
+    description: 統計値
+  - name: tab_metadata
+    description: 表章項目メタデータ (JSON)
+  - name: cat01_metadata
+    description: 分類事項メタデータ (JSON)
+  - name: area_metadata
+    description: 地域メタデータ (JSON)
+  - name: time_metadata
+    description: 時間軸メタデータ (JSON)
+  - name: stat_inf
+    description: 統計表情報 (JSON)
+
+models:
+  - name: raw_pref_population
+    description: 都道府県 A 人口・世帯
+    columns: *columns
+  - name: raw_pref_land
+    description: 都道府県 B 自然環境
+    columns: *columns
+  - name: raw_pref_economy
+    description: 都道府県 C 経済基盤
+    columns: *columns
+  - name: raw_pref_administration
+    description: 都道府県 D 行政基盤
+    columns: *columns
+  - name: raw_pref_education
+    description: 都道府県 E 教育
+    columns: *columns
+  - name: raw_pref_labor
+    description: 都道府県 F 労働
+    columns: *columns
+  - name: raw_pref_culture
+    description: 都道府県 G 文化・スポーツ
+    columns: *columns
+  - name: raw_pref_housing
+    description: 都道府県 H 居住
+    columns: *columns
+  - name: raw_pref_health
+    description: 都道府県 I 健康・医療
+    columns: *columns
+  - name: raw_pref_welfare
+    description: 都道府県 J 福祉・社会保障
+    columns: *columns
+  - name: raw_pref_safety
+    description: 都道府県 K 安全
+    columns: *columns
+  - name: raw_municipal_population
+    description: 市区町村 A 人口・世帯
+    columns: *columns
+  - name: raw_municipal_land
+    description: 市区町村 B 自然環境
+    columns: *columns
+  - name: raw_municipal_economy
+    description: 市区町村 C 経済基盤
+    columns: *columns
+  - name: raw_municipal_administration
+    description: 市区町村 D 行政基盤
+    columns: *columns
+  - name: raw_municipal_education
+    description: 市区町村 E 教育
+    columns: *columns
+  - name: raw_municipal_labor
+    description: 市区町村 F 労働
+    columns: *columns
+  - name: raw_municipal_culture
+    description: 市区町村 G 文化・スポーツ
+    columns: *columns
+  - name: raw_municipal_housing
+    description: 市区町村 H 居住
+    columns: *columns
+  - name: raw_municipal_health
+    description: 市区町村 I 健康・医療
+    columns: *columns
+  - name: raw_municipal_welfare
+    description: 市区町村 J 福祉・社会保障
+    columns: *columns
+  - name: raw_municipal_safety
+    description: 市区町村 K 安全
+    columns: *columns

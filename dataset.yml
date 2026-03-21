@@ -1,0 +1,10 @@
+title: "e-Stat 統計データ"
+description: "e-Stat API から直接取得した日本の公的統計データ"
+cover: "📊"
+tags: ["統計", "e-Stat", "人口", "社会"]
+public_url: "https://data.queria.io"
+s3_url: "{% if env_var('S3_BUCKET', '') %}s3://{{ env_var('S3_BUCKET') }}{% endif %}"
+
+schemas:
+  main:
+    title: "e-Stat 統計データ"

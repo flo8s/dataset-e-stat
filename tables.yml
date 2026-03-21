@@ -1,0 +1,114 @@
+tables:
+  # 都道府県データ（基礎データ）
+  - name: pref_population
+    description: 都道府県 A 人口・世帯
+    statsDataId: "0000010101"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_land
+    description: 都道府県 B 自然環境
+    statsDataId: "0000010102"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_economy
+    description: 都道府県 C 経済基盤
+    statsDataId: "0000010103"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_administration
+    description: 都道府県 D 行政基盤
+    statsDataId: "0000010104"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_education
+    description: 都道府県 E 教育
+    statsDataId: "0000010105"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_labor
+    description: 都道府県 F 労働
+    statsDataId: "0000010106"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_culture
+    description: 都道府県 G 文化・スポーツ
+    statsDataId: "0000010107"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_housing
+    description: 都道府県 H 居住
+    statsDataId: "0000010108"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_health
+    description: 都道府県 I 健康・医療
+    statsDataId: "0000010109"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_welfare
+    description: 都道府県 J 福祉・社会保障
+    statsDataId: "0000010110"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: pref_safety
+    description: 都道府県 K 安全
+    statsDataId: "0000010111"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+
+  # 市区町村データ（基礎データ・廃置分合処理済）
+  - name: municipal_population
+    description: 市区町村 A 人口・世帯
+    statsDataId: "0000020201"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_land
+    description: 市区町村 B 自然環境
+    statsDataId: "0000020202"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_economy
+    description: 市区町村 C 経済基盤
+    statsDataId: "0000020203"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_administration
+    description: 市区町村 D 行政基盤
+    statsDataId: "0000020204"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_education
+    description: 市区町村 E 教育
+    statsDataId: "0000020205"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_labor
+    description: 市区町村 F 労働
+    statsDataId: "0000020206"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_culture
+    description: 市区町村 G 文化・スポーツ
+    statsDataId: "0000020207"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_housing
+    description: 市区町村 H 居住
+    statsDataId: "0000020208"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_health
+    description: 市区町村 I 健康・医療
+    statsDataId: "0000020209"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_welfare
+    description: 市区町村 J 福祉・社会保障
+    statsDataId: "0000020210"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true
+  - name: municipal_safety
+    description: 市区町村 K 安全
+    statsDataId: "0000020211"
+    merge_keys: [tab, cat01, area, time]
+    incremental: true

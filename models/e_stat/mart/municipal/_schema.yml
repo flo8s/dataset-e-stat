@@ -1,0 +1,134 @@
+version: 2
+
+_columns: &columns
+  - name: cat01
+    meta:
+      title: 分類事項コード
+  - name: item_name
+    meta:
+      title: 分類事項名
+  - name: area
+    meta:
+      title: 地域コード
+  - name: area_name
+    meta:
+      title: 地域名
+  - name: time
+    meta:
+      title: 時間軸コード
+  - name: time_name
+    meta:
+      title: 時間軸名
+  - name: unit
+    meta:
+      title: 単位
+  - name: value
+    meta:
+      title: 統計値
+
+_meta: &meta
+  license: "CC BY 4.0"
+  license_url: "https://creativecommons.org/licenses/by/4.0/"
+  source_url: "https://www.e-stat.go.jp/"
+  published: true
+  tags: ["e-stat", "市区町村"]
+
+models:
+  - name: municipal_population
+    description: 人口（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "人口（市区町村）"
+    columns: *columns
+
+  - name: municipal_land
+    description: 土地（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "土地（市区町村）"
+    columns: *columns
+
+  - name: municipal_economy
+    description: 経済基盤（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "経済基盤（市区町村）"
+    columns: *columns
+
+  - name: municipal_administration
+    description: 行財政（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "行財政（市区町村）"
+    columns: *columns
+
+  - name: municipal_education
+    description: 教育（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "教育（市区町村）"
+    columns: *columns
+
+  - name: municipal_labor
+    description: 労働（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "労働（市区町村）"
+    columns: *columns
+
+  - name: municipal_culture
+    description: 文化・スポーツ（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "文化・スポーツ（市区町村）"
+    columns: *columns
+
+  - name: municipal_housing
+    description: 居住（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "居住（市区町村）"
+    columns: *columns
+
+  - name: municipal_health
+    description: 健康・医療（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "健康・医療（市区町村）"
+    columns: *columns
+
+  - name: municipal_welfare
+    description: 社会保障（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "社会保障（市区町村）"
+    columns: *columns
+
+  - name: municipal_safety
+    description: 安全（市区町村）
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "安全（市区町村）"
+    columns: *columns

@@ -1,0 +1,25 @@
+e_stat:
+  target: default
+  outputs:
+    default:
+      type: duckdb
+      path: ":memory:"
+      database: e_stat
+      schema: main
+      threads: 1
+      extensions:
+        - httpfs
+        - ducklake
+      settings:
+        s3_url_style: path
+        s3_access_key_id: "{{ env_var('S3_ACCESS_KEY_ID', '') }}"
+        s3_secret_access_key: "{{ env_var('S3_SECRET_ACCESS_KEY', '') }}"
+        s3_endpoint: "{{ env_var('S3_ENDPOINT', '') }}"
+        s3_region: auto
+      attach:
+        - path: "ducklake:sqlite:.fdl/ducklake.sqlite"
+          alias: e_stat
+          is_ducklake: true
+          options:
+            DATA_PATH: "{{ env_var('DUCKLAKE_STORAGE', 'dist') }}/ducklake.duckdb.files/"
+            OVERRIDE_DATA_PATH: true

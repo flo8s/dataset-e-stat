@@ -1,0 +1,17 @@
+name: "e_stat"
+version: "1.0.0"
+
+profile: "e_stat"
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  e_stat:
+    +database: e_stat
+    e_stat:
+      raw:
+        +materialized: view
+      mart:
+        +materialized: view

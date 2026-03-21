@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: estat_source
+    database: e_stat
+    schema: _source
+    tables:
+      - name: pref_population
+      - name: pref_land
+      - name: pref_economy
+      - name: pref_administration
+      - name: pref_education
+      - name: pref_labor
+      - name: pref_culture
+      - name: pref_housing
+      - name: pref_health
+      - name: pref_welfare
+      - name: pref_safety
+      - name: municipal_population
+      - name: municipal_land
+      - name: municipal_economy
+      - name: municipal_administration
+      - name: municipal_education
+      - name: municipal_labor
+      - name: municipal_culture
+      - name: municipal_housing
+      - name: municipal_health
+      - name: municipal_welfare
+      - name: municipal_safety
