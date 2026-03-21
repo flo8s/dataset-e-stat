@@ -1,3 +1,4 @@
+name: e_stat
 title: "e-Stat 統計データ"
 description: "e-Stat API から直接取得した日本の公的統計データ"
 cover: "📊"
