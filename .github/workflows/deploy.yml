@@ -39,6 +39,16 @@ jobs:
         if: always()
         run: uv run fdl push
 
+      - name: Generate app token
+        id: app-token
+        if: success()
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: flo8s
+          repositories: dataset-catalog
+
       - name: Trigger catalog rebuild
         if: success()
         run: |
@@ -46,7 +56,7 @@ jobs:
             -f event_type=dataset-updated \
             -f "client_payload[dataset]=e_stat"
         env:
-          GH_TOKEN: ${{ secrets.CATALOG_TRIGGER_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
   notify-failure:
     runs-on: ubuntu-latest
