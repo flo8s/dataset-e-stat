@@ -13,9 +13,11 @@ models:
     ssds:
       raw:
         +materialized: view
+        +meta:
+          published: false
       stg:
         +materialized: view
+        +meta:
+          published: false
       mart:
         +materialized: view
-    main:
-      +materialized: view

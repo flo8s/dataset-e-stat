@@ -22,6 +22,9 @@ _columns: &columns
   - name: year
     meta:
       title: 年
+  - name: month
+    meta:
+      title: 月
   - name: unit
     meta:
       title: 単位
@@ -38,100 +41,100 @@ _meta: &meta
 
 models:
   - name: municipal_population
-    description: 人口・世帯（市区町村）
+    description: A 人口・世帯（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "人口・世帯（市区町村）"
+        title: "A 人口・世帯（市区町村）"
     columns: *columns
 
   - name: municipal_land
-    description: 自然環境（市区町村）
+    description: B 自然環境（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "自然環境（市区町村）"
+        title: "B 自然環境（市区町村）"
     columns: *columns
 
   - name: municipal_economy
-    description: 経済基盤（市区町村）
+    description: C 経済基盤（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "経済基盤（市区町村）"
+        title: "C 経済基盤（市区町村）"
     columns: *columns
 
   - name: municipal_administration
-    description: 行政基盤（市区町村）
+    description: D 行政基盤（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "行政基盤（市区町村）"
+        title: "D 行政基盤（市区町村）"
     columns: *columns
 
   - name: municipal_education
-    description: 教育（市区町村）
+    description: E 教育（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "教育（市区町村）"
+        title: "E 教育（市区町村）"
     columns: *columns
 
   - name: municipal_labor
-    description: 労働（市区町村）
+    description: F 労働（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "労働（市区町村）"
+        title: "F 労働（市区町村）"
     columns: *columns
 
   - name: municipal_culture
-    description: 文化・スポーツ（市区町村）
+    description: G 文化・スポーツ（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "文化・スポーツ（市区町村）"
+        title: "G 文化・スポーツ（市区町村）"
     columns: *columns
 
   - name: municipal_housing
-    description: 居住（市区町村）
+    description: H 居住（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "居住（市区町村）"
+        title: "H 居住（市区町村）"
     columns: *columns
 
   - name: municipal_health
-    description: 健康・医療（市区町村）
+    description: I 健康・医療（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "健康・医療（市区町村）"
+        title: "I 健康・医療（市区町村）"
     columns: *columns
 
   - name: municipal_welfare
-    description: 福祉・社会保障（市区町村）
+    description: J 福祉・社会保障（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "福祉・社会保障（市区町村）"
+        title: "J 福祉・社会保障（市区町村）"
     columns: *columns
 
   - name: municipal_safety
-    description: 安全（市区町村）
+    description: K 安全（市区町村）
     access: public
     config:
       meta:
         <<: *meta
-        title: "安全（市区町村）"
+        title: "K 安全（市区町村）"
     columns: *columns

@@ -7,6 +7,7 @@ SELECT
     s.area_name,
     s.time_name,
     s.year,
+    s.month,
     COALESCE(c.unit, s.unit) AS unit,
     s.value
 FROM {{ ref(source_ref) }} s

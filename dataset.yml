@@ -10,5 +10,3 @@ s3_url: "{% if env_var('S3_BUCKET', '') %}s3://{{ env_var('S3_BUCKET') }}{% endi
 schemas:
   ssds:
     title: "社会・人口統計体系"
-  main:
-    title: "メタデータ"

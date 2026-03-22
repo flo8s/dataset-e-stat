@@ -8,6 +8,7 @@ SELECT
     time,
     time_metadata->>'$.name' AS time_name,
     TRY_CAST(regexp_extract(time_metadata->>'$.name', '(\d{4})', 1) AS INTEGER) AS year,
+    TRY_CAST(regexp_extract(time_metadata->>'$.name', '(\d{4})年(\d{1,2})月', 2) AS INTEGER) AS month,
     unit,
     TRY_CAST(value AS DOUBLE) AS value
 FROM {{ source_ref }}
