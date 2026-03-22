@@ -91,3 +91,5 @@ models:
   - name: raw_municipal_safety
     description: 市区町村 K 安全
     columns: *columns
+  - name: raw_stat_tables
+    description: e-Stat API 統計表メタデータ

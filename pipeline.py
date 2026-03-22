@@ -8,12 +8,24 @@ import dlt
 import yaml
 from dbt.cli.main import dbtRunner
 from estat_api_dlt_helper import estat_source, estat_table
+from estat_api_dlt_helper.api.client import EstatApiClient
 
 from fdl.ducklake import create_destination
 
 # dlt の ArrowExtractor が merge 時に出す column hints 差異の WARNING を抑制
 logging.getLogger("dlt.extract.extractors").setLevel(logging.ERROR)
 SOURCE_SCHEMA = "_source"
+
+
+@dlt.resource(name="stat_tables", write_disposition="merge", primary_key="id")
+def stat_tables_resource(
+    app_id: str,
+    updated_date=dlt.sources.incremental("updated_date", initial_value="20200101"),
+):
+    """e-Stat API の全統計表メタデータを差分取得する。"""
+    client = EstatApiClient(app_id=app_id)
+    result = client.get_stats_list(updatedDate=updated_date.last_value)
+    yield result["GET_STATS_LIST"]["DATALIST_INF"]["TABLE_INF"]
 
 
 def main():
@@ -47,6 +59,10 @@ def main():
         ],
     )
     info = pipeline.run(source)
+    print(info)
+
+    # 統計表カタログ取得
+    info = pipeline.run(stat_tables_resource(app_id=app_id))
     print(info)
 
     # dbt ビルド
