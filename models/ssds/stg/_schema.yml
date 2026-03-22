@@ -25,9 +25,6 @@ _columns: &columns
   - name: year
     meta:
       title: 年
-  - name: month
-    meta:
-      title: 月
   - name: unit
     meta:
       title: 単位

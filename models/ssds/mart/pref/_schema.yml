@@ -22,9 +22,6 @@ _columns: &columns
   - name: year
     meta:
       title: 年
-  - name: month
-    meta:
-      title: 月
   - name: unit
     meta:
       title: 単位
@@ -40,7 +37,7 @@ _meta: &meta
   tags: ["e-stat", "社会・人口統計体系", "都道府県"]
 
 models:
-  - name: pref_population
+  - name: a_pref_population
     description: A 人口・世帯（都道府県）
     access: public
     config:
@@ -49,7 +46,7 @@ models:
         title: "A 人口・世帯（都道府県）"
     columns: *columns
 
-  - name: pref_land
+  - name: b_pref_land
     description: B 自然環境（都道府県）
     access: public
     config:
@@ -58,7 +55,7 @@ models:
         title: "B 自然環境（都道府県）"
     columns: *columns
 
-  - name: pref_economy
+  - name: c_pref_economy
     description: C 経済基盤（都道府県）
     access: public
     config:
@@ -67,7 +64,7 @@ models:
         title: "C 経済基盤（都道府県）"
     columns: *columns
 
-  - name: pref_administration
+  - name: d_pref_administration
     description: D 行政基盤（都道府県）
     access: public
     config:
@@ -76,7 +73,7 @@ models:
         title: "D 行政基盤（都道府県）"
     columns: *columns
 
-  - name: pref_education
+  - name: e_pref_education
     description: E 教育（都道府県）
     access: public
     config:
@@ -85,7 +82,7 @@ models:
         title: "E 教育（都道府県）"
     columns: *columns
 
-  - name: pref_labor
+  - name: f_pref_labor
     description: F 労働（都道府県）
     access: public
     config:
@@ -94,7 +91,7 @@ models:
         title: "F 労働（都道府県）"
     columns: *columns
 
-  - name: pref_culture
+  - name: g_pref_culture
     description: G 文化・スポーツ（都道府県）
     access: public
     config:
@@ -103,7 +100,7 @@ models:
         title: "G 文化・スポーツ（都道府県）"
     columns: *columns
 
-  - name: pref_housing
+  - name: h_pref_housing
     description: H 居住（都道府県）
     access: public
     config:
@@ -112,7 +109,7 @@ models:
         title: "H 居住（都道府県）"
     columns: *columns
 
-  - name: pref_health
+  - name: i_pref_health
     description: I 健康・医療（都道府県）
     access: public
     config:
@@ -121,7 +118,7 @@ models:
         title: "I 健康・医療（都道府県）"
     columns: *columns
 
-  - name: pref_welfare
+  - name: j_pref_welfare
     description: J 福祉・社会保障（都道府県）
     access: public
     config:
@@ -130,7 +127,7 @@ models:
         title: "J 福祉・社会保障（都道府県）"
     columns: *columns
 
-  - name: pref_safety
+  - name: k_pref_safety
     description: K 安全（都道府県）
     access: public
     config:

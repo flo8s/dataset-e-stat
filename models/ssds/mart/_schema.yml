@@ -30,7 +30,7 @@ models:
           title: 単位
 
   - name: stat_tables
-    description: e-Stat で利用可能な統計表の一覧（プレースホルダー）
+    description: e-Stat で利用可能な統計表のメタデータ一覧（プレースホルダー）
     access: public
     config:
       meta:
