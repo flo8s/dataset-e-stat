@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: item_catalog
+    description: 社会・人口統計体系の全指標メタデータ。stg データから自動生成。
+    access: public
+    config:
+      meta:
+        title: "指標カタログ"
+        published: true
+        tags: ["e-stat", "社会・人口統計体系", "メタデータ"]
+    columns:
+      - name: item_code
+        meta:
+          title: 項目コード
+      - name: item_name
+        meta:
+          title: 項目名
+      - name: domain
+        meta:
+          title: 大分類
+      - name: subdomain_code
+        meta:
+          title: 中分類コード
+      - name: item_group_code
+        meta:
+          title: 小分類コード
+      - name: unit
+        meta:
+          title: 単位

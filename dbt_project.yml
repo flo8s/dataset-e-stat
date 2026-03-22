@@ -10,8 +10,12 @@ clean-targets: ["target", "dbt_packages"]
 models:
   e_stat:
     +database: e_stat
-    e_stat:
+    ssds:
       raw:
+        +materialized: view
+      stg:
         +materialized: view
       mart:
         +materialized: view
+    main:
+      +materialized: view

@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: stat_tables
+    description: e-Stat で利用可能な統計表のメタデータ一覧（プレースホルダー）
+    access: public
+    config:
+      meta:
+        title: "統計表一覧"
+        published: false
