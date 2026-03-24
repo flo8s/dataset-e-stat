@@ -7,9 +7,6 @@ _columns: &columns
   - name: item_name
     meta:
       title: 分類事項名
-  - name: domain
-    meta:
-      title: 大分類
   - name: area
     meta:
       title: 地域コード

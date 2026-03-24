@@ -2,7 +2,6 @@
 SELECT
     s.cat01,
     COALESCE(c.item_name, s.item_name) AS item_name,
-    c.domain,
     s.area,
     s.area_name,
     s.time_name,
