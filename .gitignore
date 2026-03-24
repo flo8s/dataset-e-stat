@@ -17,3 +17,7 @@ package-lock.yml
 # Environment
 .env
 
+# Cache
+.stats_list_cache.json
+
+
