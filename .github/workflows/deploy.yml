@@ -30,7 +30,7 @@ jobs:
         run: uv run fdl pull
 
       - name: Run pipeline
-        run: uv run python pipeline.py
+        run: uv run python main.py
 
       - name: Generate metadata
         run: uv run fdl metadata
