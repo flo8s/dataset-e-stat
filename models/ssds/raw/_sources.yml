@@ -27,4 +27,3 @@ sources:
       - name: municipal_health
       - name: municipal_welfare
       - name: municipal_safety
-      - name: stat_tables
