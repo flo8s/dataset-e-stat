@@ -43,6 +43,7 @@ models:
       総人口、年齢別人口、世帯数、婚姻、出生・死亡、転入・転出等の指標を収録。
       主な出典: 国勢調査、人口推計、人口動態統計、住民基本台帳。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010101
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/A
     access: public
     config:
       meta:
@@ -56,6 +57,7 @@ models:
       気象（気温、降水量、日照時間等）、土地面積、自然災害等の指標を収録。
       主な出典: 気象庁、国土地理院。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010102
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/B
     access: public
     config:
       meta:
@@ -69,6 +71,7 @@ models:
       県民所得、事業所数、農業・製造業・商業の生産額等の指標を収録。
       主な出典: 県民経済計算、経済センサス、農林業センサス。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010103
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/C
     access: public
     config:
       meta:
@@ -82,6 +85,7 @@ models:
       地方税収、地方交付税、歳出（目的別・性質別）等の指標を収録。
       主な出典: 地方財政状況調査。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010104
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/D
     access: public
     config:
       meta:
@@ -95,6 +99,7 @@ models:
       学校数、児童生徒数、不登校、いじめ認知件数、学歴別人口等の指標を収録。
       主な出典: 学校基本調査、児童生徒の問題行動等調査、国勢調査。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010105
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/E
     access: public
     config:
       meta:
@@ -108,6 +113,7 @@ models:
       就業者数（男女別）、失業率、最低賃金、初任給、他県就業者数等の指標を収録。
       主な出典: 国勢調査、労働力調査、賃金構造基本統計調査。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010106
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/F
     access: public
     config:
       meta:
@@ -121,6 +127,7 @@ models:
       投票率、宿泊者数（国内・外国人）、客室稼働率等の指標を収録。
       主な出典: 衆議院議員選挙、宿泊旅行統計調査。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010107
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/G
     access: public
     config:
       meta:
@@ -134,6 +141,7 @@ models:
       住宅数、空き家数、着工新設住宅、通勤先別就業者数等の指標を収録。
       主な出典: 住宅・土地統計調査、建築着工統計、国勢調査。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010108
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/H
     access: public
     config:
       meta:
@@ -147,6 +155,7 @@ models:
       平均寿命、健康寿命、医師数、病院数、死因別死亡者数等の指標を収録。
       主な出典: 生命表、医師・歯科医師・薬剤師統計、人口動態統計。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010109
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/I
     access: public
     config:
       meta:
@@ -160,6 +169,7 @@ models:
       生活保護、保育所数・定員・待機児童数、国民医療費、精神障害者手帳交付数等の指標を収録。
       主な出典: 被保護者調査、社会福祉施設等調査、国民医療費。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010110
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/J
     access: public
     config:
       meta:
@@ -173,6 +183,7 @@ models:
       交通事故（発生件数・死者数）、刑法犯認知件数、救急出動件数等の指標を収録。
       主な出典: 交通統計、犯罪統計、救急救助の現況。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010111
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/K
     access: public
     config:
       meta:

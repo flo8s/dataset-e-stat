@@ -43,6 +43,7 @@ models:
       総人口、年齢別人口、世帯数、出生・死亡、転入・転出等の指標を収録。
       廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020201
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/A
     access: public
     config:
       meta:
@@ -55,6 +56,7 @@ models:
       社会・人口統計体系 B 自然環境（市区町村）。
       土地面積等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020202
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/B
     access: public
     config:
       meta:
@@ -67,6 +69,7 @@ models:
       社会・人口統計体系 C 経済基盤（市区町村）。
       事業所数、耕地面積、製造品出荷額等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020203
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/C
     access: public
     config:
       meta:
@@ -79,6 +82,7 @@ models:
       社会・人口統計体系 D 行政基盤（市区町村）。
       歳入・歳出（目的別）等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020204
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/D
     access: public
     config:
       meta:
@@ -91,6 +95,7 @@ models:
       社会・人口統計体系 E 教育（市区町村）。
       学校数、児童生徒数等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020205
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/E
     access: public
     config:
       meta:
@@ -103,6 +108,7 @@ models:
       社会・人口統計体系 F 労働（市区町村）。
       就業者数、他県就業者数等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020206
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/F
     access: public
     config:
       meta:
@@ -115,6 +121,7 @@ models:
       社会・人口統計体系 G 文化・スポーツ（市区町村）。
       公民館数、図書館数等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020207
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/G
     access: public
     config:
       meta:
@@ -127,6 +134,7 @@ models:
       社会・人口統計体系 H 居住（市区町村）。
       住宅数、着工新設住宅、通勤先別就業者数等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020208
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/H
     access: public
     config:
       meta:
@@ -139,6 +147,7 @@ models:
       社会・人口統計体系 I 健康・医療（市区町村）。
       医師数、病院数等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020209
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/I
     access: public
     config:
       meta:
@@ -151,6 +160,7 @@ models:
       社会・人口統計体系 J 福祉・社会保障（市区町村）。
       保育所数、生活保護等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020210
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/J
     access: public
     config:
       meta:
@@ -163,6 +173,7 @@ models:
       社会・人口統計体系 K 安全（市区町村）。
       交通事故、刑法犯認知件数等の指標を収録。廃置分合処理済データ。
       https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020211
+      項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/K
     access: public
     config:
       meta:
