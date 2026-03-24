@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: estat_source
+    database: e_stat
+    schema: _source
+    tables:
+      - name: stats_list
+      - name: meta_info

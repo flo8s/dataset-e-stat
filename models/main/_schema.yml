@@ -1,8 +1,20 @@
 version: 2
 
 models:
-  - name: stat_tables
-    description: e-Stat API の全統計表メタデータ
+  - name: raw_stats_list
+    description: |
+      e-Stat API getStatsList のレスポンス (raw)。
+      https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0
+
+  - name: raw_meta_info
+    description: |
+      e-Stat API getMetaInfo のレスポンス (raw)。
+      https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0
+
+  - name: stats_list
+    description: |
+      e-Stat API getStatsList から取得した統計表情報。
+      e-Stat で提供している統計表の情報（政府統計名、作成機関、統計表題名、調査年月、公開日、統計分野等）を提供する。
     access: public
     config:
       meta:
@@ -10,3 +22,46 @@ models:
         published: true
         source_url: "https://www.e-stat.go.jp/"
         tags: ["e-stat", "メタデータ"]
+
+  - name: meta_info
+    description: |
+      e-Stat API getMetaInfo から取得したメタ情報。
+      各統計表の表章事項・分類事項・地域事項・時間軸事項のコード、名称、単位、階層レベル等を提供する。
+    access: public
+    config:
+      meta:
+        title: "メタ情報"
+        published: true
+        source_url: "https://www.e-stat.go.jp/"
+        tags: ["e-stat", "メタデータ"]
+    columns:
+      - name: stats_data_id
+        meta:
+          title: 統計表ID
+      - name: class_id
+        meta:
+          title: 分類軸ID (tab, cat01〜cat15, area, time)
+      - name: class_name
+        meta:
+          title: 分類軸名
+      - name: class_description
+        meta:
+          title: 分類軸の解説
+      - name: item_code
+        meta:
+          title: 項目コード
+      - name: item_name
+        meta:
+          title: 項目名
+      - name: level
+        meta:
+          title: 階層レベル
+      - name: unit
+        meta:
+          title: 単位
+      - name: parent_code
+        meta:
+          title: 親コード
+      - name: add_inf
+        meta:
+          title: 追加情報
