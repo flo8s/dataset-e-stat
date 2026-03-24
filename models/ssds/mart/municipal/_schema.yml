@@ -32,13 +32,17 @@ _columns: &columns
 _meta: &meta
   license: "CC BY 4.0"
   license_url: "https://creativecommons.org/licenses/by/4.0/"
-  source_url: "https://www.e-stat.go.jp/"
+  source_url: "https://www.e-stat.go.jp/statistics/00200502"
   published: true
   tags: ["e-stat", "社会・人口統計体系", "市区町村"]
 
 models:
   - name: a_municipal_population
-    description: A 人口・世帯（市区町村）
+    description: |
+      社会・人口統計体系 A 人口・世帯（市区町村）。
+      総人口、年齢別人口、世帯数、出生・死亡、転入・転出等の指標を収録。
+      廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020201
     access: public
     config:
       meta:
@@ -47,7 +51,10 @@ models:
     columns: *columns
 
   - name: b_municipal_land
-    description: B 自然環境（市区町村）
+    description: |
+      社会・人口統計体系 B 自然環境（市区町村）。
+      土地面積等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020202
     access: public
     config:
       meta:
@@ -56,7 +63,10 @@ models:
     columns: *columns
 
   - name: c_municipal_economy
-    description: C 経済基盤（市区町村）
+    description: |
+      社会・人口統計体系 C 経済基盤（市区町村）。
+      事業所数、耕地面積、製造品出荷額等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020203
     access: public
     config:
       meta:
@@ -65,7 +75,10 @@ models:
     columns: *columns
 
   - name: d_municipal_administration
-    description: D 行政基盤（市区町村）
+    description: |
+      社会・人口統計体系 D 行政基盤（市区町村）。
+      歳入・歳出（目的別）等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020204
     access: public
     config:
       meta:
@@ -74,7 +87,10 @@ models:
     columns: *columns
 
   - name: e_municipal_education
-    description: E 教育（市区町村）
+    description: |
+      社会・人口統計体系 E 教育（市区町村）。
+      学校数、児童生徒数等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020205
     access: public
     config:
       meta:
@@ -83,7 +99,10 @@ models:
     columns: *columns
 
   - name: f_municipal_labor
-    description: F 労働（市区町村）
+    description: |
+      社会・人口統計体系 F 労働（市区町村）。
+      就業者数、他県就業者数等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020206
     access: public
     config:
       meta:
@@ -92,7 +111,10 @@ models:
     columns: *columns
 
   - name: g_municipal_culture
-    description: G 文化・スポーツ（市区町村）
+    description: |
+      社会・人口統計体系 G 文化・スポーツ（市区町村）。
+      公民館数、図書館数等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020207
     access: public
     config:
       meta:
@@ -101,7 +123,10 @@ models:
     columns: *columns
 
   - name: h_municipal_housing
-    description: H 居住（市区町村）
+    description: |
+      社会・人口統計体系 H 居住（市区町村）。
+      住宅数、着工新設住宅、通勤先別就業者数等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020208
     access: public
     config:
       meta:
@@ -110,7 +135,10 @@ models:
     columns: *columns
 
   - name: i_municipal_health
-    description: I 健康・医療（市区町村）
+    description: |
+      社会・人口統計体系 I 健康・医療（市区町村）。
+      医師数、病院数等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020209
     access: public
     config:
       meta:
@@ -119,7 +147,10 @@ models:
     columns: *columns
 
   - name: j_municipal_welfare
-    description: J 福祉・社会保障（市区町村）
+    description: |
+      社会・人口統計体系 J 福祉・社会保障（市区町村）。
+      保育所数、生活保護等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020210
     access: public
     config:
       meta:
@@ -128,7 +159,10 @@ models:
     columns: *columns
 
   - name: k_municipal_safety
-    description: K 安全（市区町村）
+    description: |
+      社会・人口統計体系 K 安全（市区町村）。
+      交通事故、刑法犯認知件数等の指標を収録。廃置分合処理済データ。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020211
     access: public
     config:
       meta:

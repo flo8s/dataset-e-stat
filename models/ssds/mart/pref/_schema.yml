@@ -32,13 +32,17 @@ _columns: &columns
 _meta: &meta
   license: "CC BY 4.0"
   license_url: "https://creativecommons.org/licenses/by/4.0/"
-  source_url: "https://www.e-stat.go.jp/"
+  source_url: "https://www.e-stat.go.jp/statistics/00200502"
   published: true
   tags: ["e-stat", "社会・人口統計体系", "都道府県"]
 
 models:
   - name: a_pref_population
-    description: A 人口・世帯（都道府県）
+    description: |
+      社会・人口統計体系 A 人口・世帯（都道府県）。
+      総人口、年齢別人口、世帯数、婚姻、出生・死亡、転入・転出等の指標を収録。
+      主な出典: 国勢調査、人口推計、人口動態統計、住民基本台帳。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010101
     access: public
     config:
       meta:
@@ -47,7 +51,11 @@ models:
     columns: *columns
 
   - name: b_pref_land
-    description: B 自然環境（都道府県）
+    description: |
+      社会・人口統計体系 B 自然環境（都道府県）。
+      気象（気温、降水量、日照時間等）、土地面積、自然災害等の指標を収録。
+      主な出典: 気象庁、国土地理院。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010102
     access: public
     config:
       meta:
@@ -56,7 +64,11 @@ models:
     columns: *columns
 
   - name: c_pref_economy
-    description: C 経済基盤（都道府県）
+    description: |
+      社会・人口統計体系 C 経済基盤（都道府県）。
+      県民所得、事業所数、農業・製造業・商業の生産額等の指標を収録。
+      主な出典: 県民経済計算、経済センサス、農林業センサス。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010103
     access: public
     config:
       meta:
@@ -65,7 +77,11 @@ models:
     columns: *columns
 
   - name: d_pref_administration
-    description: D 行政基盤（都道府県）
+    description: |
+      社会・人口統計体系 D 行政基盤（都道府県）。
+      地方税収、地方交付税、歳出（目的別・性質別）等の指標を収録。
+      主な出典: 地方財政状況調査。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010104
     access: public
     config:
       meta:
@@ -74,7 +90,11 @@ models:
     columns: *columns
 
   - name: e_pref_education
-    description: E 教育（都道府県）
+    description: |
+      社会・人口統計体系 E 教育（都道府県）。
+      学校数、児童生徒数、不登校、いじめ認知件数、学歴別人口等の指標を収録。
+      主な出典: 学校基本調査、児童生徒の問題行動等調査、国勢調査。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010105
     access: public
     config:
       meta:
@@ -83,7 +103,11 @@ models:
     columns: *columns
 
   - name: f_pref_labor
-    description: F 労働（都道府県）
+    description: |
+      社会・人口統計体系 F 労働（都道府県）。
+      就業者数（男女別）、失業率、最低賃金、初任給、他県就業者数等の指標を収録。
+      主な出典: 国勢調査、労働力調査、賃金構造基本統計調査。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010106
     access: public
     config:
       meta:
@@ -92,7 +116,11 @@ models:
     columns: *columns
 
   - name: g_pref_culture
-    description: G 文化・スポーツ（都道府県）
+    description: |
+      社会・人口統計体系 G 文化・スポーツ（都道府県）。
+      投票率、宿泊者数（国内・外国人）、客室稼働率等の指標を収録。
+      主な出典: 衆議院議員選挙、宿泊旅行統計調査。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010107
     access: public
     config:
       meta:
@@ -101,7 +129,11 @@ models:
     columns: *columns
 
   - name: h_pref_housing
-    description: H 居住（都道府県）
+    description: |
+      社会・人口統計体系 H 居住（都道府県）。
+      住宅数、空き家数、着工新設住宅、通勤先別就業者数等の指標を収録。
+      主な出典: 住宅・土地統計調査、建築着工統計、国勢調査。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010108
     access: public
     config:
       meta:
@@ -110,7 +142,11 @@ models:
     columns: *columns
 
   - name: i_pref_health
-    description: I 健康・医療（都道府県）
+    description: |
+      社会・人口統計体系 I 健康・医療（都道府県）。
+      平均寿命、健康寿命、医師数、病院数、死因別死亡者数等の指標を収録。
+      主な出典: 生命表、医師・歯科医師・薬剤師統計、人口動態統計。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010109
     access: public
     config:
       meta:
@@ -119,7 +155,11 @@ models:
     columns: *columns
 
   - name: j_pref_welfare
-    description: J 福祉・社会保障（都道府県）
+    description: |
+      社会・人口統計体系 J 福祉・社会保障（都道府県）。
+      生活保護、保育所数・定員・待機児童数、国民医療費、精神障害者手帳交付数等の指標を収録。
+      主な出典: 被保護者調査、社会福祉施設等調査、国民医療費。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010110
     access: public
     config:
       meta:
@@ -128,7 +168,11 @@ models:
     columns: *columns
 
   - name: k_pref_safety
-    description: K 安全（都道府県）
+    description: |
+      社会・人口統計体系 K 安全（都道府県）。
+      交通事故（発生件数・死者数）、刑法犯認知件数、救急出動件数等の指標を収録。
+      主な出典: 交通統計、犯罪統計、救急救助の現況。
+      https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010111
     access: public
     config:
       meta:
