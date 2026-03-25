@@ -1,6 +1,8 @@
 name: e_stat
 title: "e-Stat 統計データ"
-description: "e-Stat API から直接取得した日本の公的統計データ"
+description: |
+  e-Stat API から直接取得した日本の公的統計データ。
+  このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。
 cover: "📊"
 tags: ["統計", "e-Stat", "人口", "社会"]
 repository_url: "https://github.com/flo8s/dataset-e-stat"
