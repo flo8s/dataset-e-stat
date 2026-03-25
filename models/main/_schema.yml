@@ -1,16 +1,6 @@
 version: 2
 
 models:
-  - name: raw_stats_list
-    config:
-      meta:
-        published: false
-
-  - name: raw_meta_info
-    config:
-      meta:
-        published: false
-
   - name: stats_list
     description: |
       e-Stat API getStatsList から取得した統計表情報。
