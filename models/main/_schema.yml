@@ -28,6 +28,82 @@ models:
         published: true
         source_url: "https://www.e-stat.go.jp/"
         tags: ["e-stat", "メタデータ"]
+    columns:
+      - name: id
+        meta:
+          title: 統計表ID
+      - name: stat_code
+        meta:
+          title: 政府統計コード
+      - name: stat_name
+        meta:
+          title: 政府統計名
+      - name: gov_org_code
+        meta:
+          title: 作成機関コード
+      - name: gov_org_name
+        meta:
+          title: 作成機関名
+      - name: statistics_name
+        meta:
+          title: 提供統計名称
+      - name: tabulation_category
+        meta:
+          title: 集計分類
+      - name: tabulation_sub_category
+        meta:
+          title: 集計サブ分類
+      - name: title
+        meta:
+          title: 統計表題名
+      - name: table_number
+        meta:
+          title: 表番号
+      - name: table_category
+        meta:
+          title: 表分類
+      - name: table_name
+        meta:
+          title: 表名
+      - name: table_explanation
+        meta:
+          title: 表の説明
+      - name: table_sub_category
+        meta:
+          title: 表サブ分類
+      - name: main_category_code
+        meta:
+          title: 統計大分野コード
+      - name: main_category
+        meta:
+          title: 統計大分野
+      - name: sub_category_code
+        meta:
+          title: 統計小分野コード
+      - name: sub_category
+        meta:
+          title: 統計小分野
+      - name: cycle
+        meta:
+          title: 提供周期
+      - name: survey_date
+        meta:
+          title: 調査年月
+      - name: open_date
+        meta:
+          title: 公開日
+      - name: updated_date
+        meta:
+          title: 更新日
+      - name: small_area
+        meta:
+          title: 小地域属性
+      - name: collect_area
+        meta:
+          title: 集計地域区分
+      - name: overall_total_number
+        meta:
+          title: 総件数
 
   - name: meta_info
     description: |
