@@ -1,8 +1,22 @@
-SELECT *
-FROM {{ ref('meta_info') }}
-WHERE stats_data_id IN (
-    SELECT DISTINCT aid FROM {{ ref('stats_list') }}
+WITH ssds_tables AS (
+    SELECT DISTINCT id, title
+    FROM {{ ref('stats_list') }}
     -- 社会・人口統計体系: https://www.e-stat.go.jp/statistics/00200502
-    WHERE stat_name__acode = '00200502'
+    WHERE stat_code = '00200502'
 )
-AND class_id NOT IN ('tab', 'area', 'time')
+
+SELECT
+    s.title AS table_title,
+    m.stats_data_id,
+    m.class_id,
+    m.class_name,
+    m.class_description,
+    m.item_code,
+    m.item_name,
+    m.level,
+    m.unit,
+    m.parent_code,
+    m.add_inf
+FROM {{ ref('meta_info') }} m
+JOIN ssds_tables s ON m.stats_data_id = s.id
+WHERE m.class_id NOT IN ('tab', 'area', 'time')

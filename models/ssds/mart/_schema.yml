@@ -3,12 +3,46 @@ version: 2
 models:
   - name: item_catalog
     description: |
-      社会・人口統計体系 (https://www.e-stat.go.jp/statistics/00200502) の指標カタログ。
-      e-Stat API getMetaInfo から取得した分類事項（cat01）の一覧。
+      社会・人口統計体系の各統計表で使用される分類項目（cat01〜cat15）の定義一覧。
+      e-Stat API getMetaInfo から取得し、統計表名を付与。tab/area/time 分類は除外。
     access: public
     config:
       meta:
-        title: "指標カタログ"
+        title: "分類項目定義"
         published: true
         source_url: "https://www.e-stat.go.jp/statistics/00200502"
         tags: ["e-stat", "社会・人口統計体系", "メタデータ"]
+    columns:
+      - name: table_title
+        meta:
+          title: 統計表題名
+      - name: stats_data_id
+        meta:
+          title: 統計表ID
+      - name: class_id
+        meta:
+          title: 分類軸ID
+      - name: class_name
+        meta:
+          title: 分類軸名
+      - name: class_description
+        meta:
+          title: 分類軸の解説
+      - name: item_code
+        meta:
+          title: 項目コード
+      - name: item_name
+        meta:
+          title: 項目名
+      - name: level
+        meta:
+          title: 階層レベル
+      - name: unit
+        meta:
+          title: 単位
+      - name: parent_code
+        meta:
+          title: 親コード
+      - name: add_inf
+        meta:
+          title: 追加情報
