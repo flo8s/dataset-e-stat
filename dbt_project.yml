@@ -7,6 +7,11 @@ model-paths: ["models"]
 macro-paths: ["macros"]
 clean-targets: ["target", "dbt_packages"]
 
+seeds:
+  e_stat:
+    +database: e_stat
+    +schema: main
+
 models:
   e_stat:
     +database: e_stat

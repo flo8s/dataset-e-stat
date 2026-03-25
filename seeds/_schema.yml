@@ -1,0 +1,8 @@
+version: 2
+
+seeds:
+  - name: seed_stats_field
+    description: |
+      e-Stat API 統計分野一覧から取得。
+      https://www.e-stat.go.jp/api/api-info/statsfield/
+      CSV: https://www.e-stat.go.jp/api/sites/default/files/uploads/2015/11/statsfield.csv
