@@ -32,6 +32,9 @@ jobs:
       - name: Run pipeline
         run: uv run python main.py
 
+      - name: Test
+        run: uv run dbt test
+
       - name: Generate metadata
         run: uv run fdl metadata
 
