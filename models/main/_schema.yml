@@ -5,11 +5,17 @@ models:
     description: |
       e-Stat API getStatsList のレスポンス (raw)。
       https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0
+    config:
+      meta:
+        published: false
 
   - name: raw_meta_info
     description: |
       e-Stat API getMetaInfo のレスポンス (raw)。
       https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0
+    config:
+      meta:
+        published: false
 
   - name: stats_list
     description: |
