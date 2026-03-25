@@ -14,7 +14,7 @@ SELECT
         NULLIF(statistics_name_spec__tabulation_sub_category2, ''),
         NULLIF(statistics_name_spec__tabulation_sub_category3, ''),
         NULLIF(statistics_name_spec__tabulation_sub_category4, ''),
-        NULLIF(statistics_name_spec__tabulation_sub_category5, ''),
+        NULLIF(statistics_name_spec__tabulation_sub_category5, '')
     ) AS tabulation_sub_category,
     -- 統計表
     COALESCE(NULLIF(title, ''), title__x, title_spec__table_name) AS title,
@@ -26,7 +26,7 @@ SELECT
         ' > ',
         NULLIF(title_spec__table_sub_category1, ''),
         NULLIF(title_spec__table_sub_category2, ''),
-        NULLIF(title_spec__table_sub_category3, ''),
+        NULLIF(title_spec__table_sub_category3, '')
     ) AS table_sub_category,
     -- 分野
     main_category__acode AS main_category_code,
