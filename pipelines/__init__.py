@@ -1,7 +1,6 @@
 """パイプライン共通セットアップ。"""
 
 import logging
-import os
 from enum import IntEnum
 
 import dlt
@@ -27,7 +26,7 @@ SOURCE_SCHEMA = "_source"
 
 def create_pipeline():
     """共通の dlt パイプラインを作成する。"""
-    destination = create_destination(os.environ.get("DUCKLAKE_STORAGE", "dist"))
+    destination = create_destination()
     return dlt.pipeline(
         pipeline_name="estat",
         destination=destination,

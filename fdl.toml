@@ -1,0 +1,7 @@
+name = "e_stat"
+
+[storage]
+public_url = "https://data.queria.io"
+
+[remotes]
+origin = "s3://${FDL_S3_BUCKET}"
