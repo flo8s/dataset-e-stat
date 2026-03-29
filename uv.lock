@@ -440,26 +440,22 @@ requires-dist = [
     { name = "dbt-duckdb", specifier = ">=1.10.0" },
     { name = "dlt", extras = ["ducklake"], specifier = ">=1.17.0" },
     { name = "estat-api-dlt-helper", specifier = ">=0.3.0" },
-    { name = "frozen-ducklake" },
+    { name = "frozen-ducklake", specifier = ">=0.5.0" },
     { name = "pyyaml", specifier = ">=6.0" },
 ]
 
 [[package]]
 name = "frozen-ducklake"
-version = "0.3.3"
+version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "boto3" },
-    { name = "dbt-core" },
     { name = "duckdb" },
-    { name = "jinja2" },
-    { name = "pydantic" },
-    { name = "pyyaml" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/74/7c/facd9098ee9b3035d9d7362dfeb0e22b3f1c1c763c0d4c1849d110849b5d/frozen_ducklake-0.3.3.tar.gz", hash = "sha256:89303c765608400ebd0ffd13a0edb8c87b87f98dceb7dfe7ef9096460d852856", size = 80984, upload-time = "2026-03-27T00:47:33.388Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/62/ca/07ef0a74230a0a83cc86f21d50f1cba2094f3eb9eacd6919047ed7f8a590/frozen_ducklake-0.5.0.tar.gz", hash = "sha256:6176e53ff2e55f5cda86b4603172e7afcb99bc9e23e345ba61c7f32604812cc5", size = 74351, upload-time = "2026-03-29T03:28:58.981Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/03/56f87da2d5c5fc4b28bbc604c31c20fad67eb8b567782c063a739a0a3d71/frozen_ducklake-0.3.3-py3-none-any.whl", hash = "sha256:2fd3d151bda50f193db91ab15df9777d6e4ab8a5594827bce9ce25918f6cfa42", size = 18495, upload-time = "2026-03-27T00:47:31.996Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/12/e904eef16eb560593d21f5e37dbbde6213a780fe3f2b366d704bf887af2a/frozen_ducklake-0.5.0-py3-none-any.whl", hash = "sha256:834106b2bc25057c3611b2e66102c9c71ddcbc335cad8c81fab2479032c3fbac", size = 17062, upload-time = "2026-03-29T03:28:57.477Z" },
 ]
 
 [[package]]

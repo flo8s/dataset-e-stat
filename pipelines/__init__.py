@@ -3,8 +3,10 @@
 import logging
 from enum import IntEnum
 
+import os
+
 import dlt
-from fdl.ducklake import create_destination
+from dlt.destinations import ducklake
 
 
 class EstatStatus(IntEnum):
@@ -26,9 +28,14 @@ SOURCE_SCHEMA = "_source"
 
 def create_pipeline():
     """共通の dlt パイプラインを作成する。"""
-    destination = create_destination()
+    catalog = os.environ["FDL_CATALOG"]
+    prefix = "sqlite" if catalog.endswith(".sqlite") else "duckdb"
     return dlt.pipeline(
         pipeline_name="estat",
-        destination=destination,
+        destination=ducklake(
+            credentials=f"{prefix}:///{catalog}",
+            bucket_url=os.environ["FDL_DATA_PATH"],
+            override_data_path=True,
+        ),
         dataset_name=SOURCE_SCHEMA,
     )

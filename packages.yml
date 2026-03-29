@@ -1,4 +1,1 @@
-packages:
-  - git: "https://github.com/flo8s/fdl"
-    subdirectory: "packages/fdl_common"
-    revision: main
+packages: []
