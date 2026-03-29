@@ -34,6 +34,9 @@ jobs:
       - name: Test
         run: uv run fdl run default -- dbt test
 
+      - name: Upload metadata
+        run: uv run python scripts/upload_metadata.py
+
       - name: Push catalog
         if: always()
         run: uv run fdl push default
