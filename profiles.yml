@@ -17,9 +17,9 @@ e_stat:
         s3_endpoint: "{{ env_var('FDL_S3_ENDPOINT_HOST', '') }}"
         s3_region: auto
       attach:
-        - path: "ducklake:{{ env_var('FDL_CATALOG') }}"
+        - path: "ducklake:{{ env_var('FDL_CATALOG', '') }}"
           alias: e_stat
           is_ducklake: true
           options:
-            DATA_PATH: "{{ env_var('FDL_DATA_PATH') }}"
+            DATA_PATH: "{{ env_var('FDL_DATA_PATH', '') }}"
             OVERRIDE_DATA_PATH: true
