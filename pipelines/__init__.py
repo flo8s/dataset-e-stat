@@ -7,6 +7,7 @@ import os
 
 import dlt
 from dlt.destinations import ducklake
+from dlt.destinations.impl.ducklake.configuration import DuckLakeCredentials
 
 
 class EstatStatus(IntEnum):
@@ -28,13 +29,17 @@ SOURCE_SCHEMA = "_source"
 
 def create_pipeline():
     """共通の dlt パイプラインを作成する。"""
-    catalog = os.environ["FDL_CATALOG"]
+    from pathlib import Path
+
+    catalog = str(Path(os.environ["FDL_CATALOG"]).resolve())
     prefix = "sqlite" if catalog.endswith(".sqlite") else "duckdb"
     return dlt.pipeline(
         pipeline_name="estat",
         destination=ducklake(
-            credentials=f"{prefix}:///{catalog}",
-            bucket_url=os.environ["FDL_DATA_PATH"],
+            credentials=DuckLakeCredentials(
+                catalog=f"{prefix}:///{catalog}",
+                storage=os.environ["FDL_DATA_PATH"],
+            ),
             override_data_path=True,
         ),
         dataset_name=SOURCE_SCHEMA,
