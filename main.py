@@ -6,6 +6,7 @@
 4. dbt:        dbt ビルド
 """
 
+import logging
 import os
 from pathlib import Path
 
@@ -16,6 +17,9 @@ from pipelines import create_pipeline
 from pipelines.meta_info import meta_info_resource
 from pipelines.ssds import create_source
 from pipelines.stats_list import fetch_updated_ids, stats_list_resource
+
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+logger = logging.getLogger(__name__)
 
 
 def dbt_build():
@@ -46,17 +50,26 @@ def main():
     app_id = os.environ["ESTAT_API_KEY"]
 
     # 1. 統計表カタログ (全件取得)
-    pipeline.run(stats_list_resource(app_id))
+    logger.info("1/4: stats_list (統計表カタログ)")
+    info = pipeline.run(stats_list_resource(app_id))
+    logger.info(f"  {info}")
 
     # 2. メタ情報 (直近30日間に更新された統計表のみ)
+    logger.info("2/4: meta_info (メタ情報)")
     updated_ids = fetch_updated_ids(app_id, days=30)
     if updated_ids:
-        pipeline.run(meta_info_resource(app_id, updated_ids))
+        info = pipeline.run(meta_info_resource(app_id, updated_ids))
+        logger.info(f"  {info}")
+    else:
+        logger.info("  skip (no updates)")
 
     # 3. 社会・人口統計体系(SSDS) データ
-    pipeline.run(create_source(app_id, tables_config))
+    logger.info("3/4: ssds (社会・人口統計体系)")
+    info = pipeline.run(create_source(app_id, tables_config))
+    logger.info(f"  {info}")
 
     # 4. dbt ビルド
+    logger.info("4/4: dbt build")
     dbt_build()
 
 
