@@ -1,5 +1,16 @@
 name = "e_stat"
 
+[targets.default]
+url = "s3://${FDL_S3_BUCKET}"
+public_url = "https://data.queria.io"
+s3_endpoint = "${FDL_S3_ENDPOINT}"
+s3_access_key_id = "${FDL_S3_ACCESS_KEY_ID}"
+s3_secret_access_key = "${FDL_S3_SECRET_ACCESS_KEY}"
+
+[targets.local]
+url = "~/.local/share/fdl"
+public_url = "http://localhost:4001"
+
 [meta]
 title = "e-Stat 統計データ"
 description = """e-Stat API から直接取得した日本の公的統計データ。
@@ -8,17 +19,7 @@ cover = "📊"
 tags = ['統計', 'e-Stat', '人口', '社会']
 repository_url = "https://github.com/flo8s/dataset-e-stat"
 
+
 [meta.schemas]
-[meta.schemas.main]
-title = "e-Stat 統計データ"
-
-[meta.schemas.ssds]
-title = "社会・人口統計体系"
-
-
-[targets.default]
-url = "s3://${FDL_S3_BUCKET}"
-public_url = "https://data.queria.io"
-s3_endpoint = "${FDL_S3_ENDPOINT}"
-s3_access_key_id = "${FDL_S3_ACCESS_KEY_ID}"
-s3_secret_access_key = "${FDL_S3_SECRET_ACCESS_KEY}"
+main.title = "e-Stat 統計データ"
+ssds.title = "社会・人口統計体系"
