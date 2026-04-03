@@ -64,8 +64,9 @@ def _save_cache(tables: list[dict]):
 def stats_list_resource(app_id: str):
     """全統計表メタデータを取得してロードする。"""
     client = EstatApiClient(app_id=app_id, timeout=300)
+    logger.info("getStatsList: fetching...")
     tables = _fetch(client)
-    logger.info(f"stats_list: {len(tables)} tables")
+    logger.info(f"getStatsList: {len(tables)} tables")
     yield tables
 
 

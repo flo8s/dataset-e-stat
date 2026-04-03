@@ -18,8 +18,7 @@ from pipelines.meta_info import meta_info_resource
 from pipelines.ssds import create_source
 from pipelines.stats_list import fetch_updated_ids, stats_list_resource
 
-logging.basicConfig(level=logging.INFO, format="%(message)s")
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("pipelines")
 
 
 def dbt_build():

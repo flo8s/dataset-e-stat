@@ -1,14 +1,14 @@
 """パイプライン共通セットアップ。"""
 
 import logging
-from enum import IntEnum
-
+import logging.config
 import os
+from enum import IntEnum
+from pathlib import Path
 
 import dlt
 from dlt.destinations import ducklake
 from dlt.destinations.impl.ducklake.configuration import DuckLakeCredentials
-
 
 class EstatStatus(IntEnum):
     """e-Stat API レスポンスステータスコード。
@@ -21,24 +21,52 @@ class EstatStatus(IntEnum):
     PARTIAL = 2  # 正常終了（条件不一致、部分的な結果）
     # 100+ はエラー
 
-# dlt の ArrowExtractor が merge 時に出す column hints 差異の WARNING を抑制
-logging.getLogger("dlt.extract.extractors").setLevel(logging.ERROR)
+logging.config.dictConfig(
+    {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {"plain": {"format": "%(message)s"}},
+        "handlers": {
+            "console": {"class": "logging.StreamHandler", "formatter": "plain"}
+        },
+        "loggers": {
+            "pipelines": {"level": "INFO", "handlers": ["console"], "propagate": False},
+            "dlt.extract.extractors": {"level": "ERROR"},
+        },
+    }
+)
 
 SOURCE_SCHEMA = "_source"
 
 
 def create_pipeline():
     """共通の dlt パイプラインを作成する。"""
-    from pathlib import Path
-
     catalog = str(Path(os.environ["FDL_CATALOG"]).resolve())
     prefix = "sqlite" if catalog.endswith(".sqlite") else "duckdb"
+    data_path = os.environ["FDL_DATA_PATH"]
+
+    storage = data_path
+    if data_path.startswith("s3://"):
+        from dlt.common.configuration.specs import AwsCredentials
+        from dlt.common.storages.configuration import FilesystemConfiguration
+
+        storage = FilesystemConfiguration(
+            bucket_url=data_path,
+            credentials=AwsCredentials(
+                aws_access_key_id=os.environ["FDL_S3_ACCESS_KEY_ID"],
+                aws_secret_access_key=os.environ["FDL_S3_SECRET_ACCESS_KEY"],
+                endpoint_url=os.environ.get("FDL_S3_ENDPOINT"),
+                region_name="auto",
+                s3_url_style="path",
+            ),
+        )
+
     return dlt.pipeline(
         pipeline_name="estat",
         destination=ducklake(
             credentials=DuckLakeCredentials(
                 catalog=f"{prefix}:///{catalog}",
-                storage=os.environ["FDL_DATA_PATH"],
+                storage=storage,
             ),
             override_data_path=True,
         ),
