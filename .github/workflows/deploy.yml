@@ -23,6 +23,8 @@ jobs:
       ESTAT_API_KEY: ${{ secrets.ESTAT_API_KEY }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: true
 
       - uses: astral-sh/setup-uv@v7
         with:
@@ -34,9 +36,6 @@ jobs:
 
       - name: Build and push
         run: scripts/build.sh default
-
-      - name: Upload artifacts
-        run: uv run python scripts/upload_artifacts.py
 
       - name: Generate app token
         id: app-token
