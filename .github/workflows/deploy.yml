@@ -29,7 +29,8 @@ jobs:
           enable-cache: true
       - run: uv python install 3.13
 
-      - run: uv sync
+      # fdl (frozen-ducklake) はベータ開発中のため、常に最新版を使用する
+      - run: uv lock --upgrade-package frozen-ducklake && uv sync
 
       - name: Build and push
         run: scripts/build.sh default
