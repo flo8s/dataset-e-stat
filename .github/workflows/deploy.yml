@@ -34,9 +34,6 @@ jobs:
       - name: Build and push
         run: scripts/build.sh default
 
-      - name: Test
-        run: uv run fdl run default -- dbt test
-
       - name: Upload artifacts
         run: uv run python scripts/upload_artifacts.py
 

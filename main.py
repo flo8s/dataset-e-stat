@@ -28,13 +28,9 @@ def dbt_build():
     if not result.success:
         raise SystemExit("dbt deps failed")
 
-    result = dbt.invoke(["seed"])
+    result = dbt.invoke(["build"])
     if not result.success:
-        raise SystemExit("dbt seed failed")
-
-    result = dbt.invoke(["run"])
-    if not result.success:
-        raise SystemExit("dbt run failed")
+        raise SystemExit("dbt build failed")
 
     result = dbt.invoke(["docs", "generate"])
     if not result.success:
