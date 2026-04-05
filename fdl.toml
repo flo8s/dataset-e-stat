@@ -14,6 +14,8 @@ url = "~/.local/share/fdl"
 public_url = "http://localhost:4001"
 
 [meta]
+license = "政府標準利用規約 第2.0版"
+license_url = "https://www.e-stat.go.jp/terms-of-use"
 title = "e-Stat 統計データ"
 description = """e-Stat API から直接取得した日本の公的統計データ。
 このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。"""

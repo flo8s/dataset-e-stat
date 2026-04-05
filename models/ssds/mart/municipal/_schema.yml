@@ -27,8 +27,6 @@ _columns: &columns
       title: 統計値
 
 _meta: &meta
-  license: "CC BY 4.0"
-  license_url: "https://creativecommons.org/licenses/by/4.0/"
   source_url: "https://www.e-stat.go.jp/statistics/00200502"
   published: true
   tags: ["e-stat", "社会・人口統計体系", "市区町村"]
