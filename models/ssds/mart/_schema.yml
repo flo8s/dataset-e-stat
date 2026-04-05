@@ -3,15 +3,16 @@ version: 2
 models:
   - name: item_catalog
     description: |
-      社会・人口統計体系の各統計表で使用される分類項目（cat01〜cat15）の定義一覧。
-      e-Stat API getMetaInfo から取得し、統計表名を付与。tab/area/time 分類は除外。
+      社会・人口統計体系（SSDS）の基礎データ項目一覧。
+      都道府県・市区町村の全22表で利用可能な統計指標とその分類体系を提供する。
+      分類体系の詳細: https://www.stat.go.jp/data/ssds/2.html
     access: public
     config:
       meta:
         title: "分類項目定義"
         published: true
-        source_url: "https://www.e-stat.go.jp/statistics/00200502"
-        tags: ["e-stat", "社会・人口統計体系", "メタデータ"]
+        source_url: "https://www.stat.go.jp/data/ssds/2.html"
+        tags: ["e-stat", "社会・人口統計体系"]
     columns:
       - name: table_title
         meta:
