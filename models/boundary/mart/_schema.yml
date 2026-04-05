@@ -1,0 +1,75 @@
+version: 2
+
+_meta: &meta
+  license: "独自利用規約（CC BY 4.0 相当）"
+  license_url: "https://www.e-stat.go.jp/terms-of-use"
+  source_url: "https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=A&toukeiCode=00200521&toukeiYear=2020&serveyId=A002005212020&coordsys=1&format=gml&datum=2011"
+  published: true
+  tags: ["e-stat", "国勢調査", "境界", "GIS", "小地域"]
+
+models:
+  - name: small_area
+    description: |
+      令和2年国勢調査 町丁・字等別境界データ。
+      境界ポリゴン・人口・世帯数を key_code で結合可能な形で提供。
+      水面調査区(HCODE=8154)を除外。
+      同一KEY_CODEに複数境界がある場合は代表(KIGO_E=E1)のみ残し、
+      飛び地等の重複ポリゴン(E2以降)は除外済み。
+    access: public
+    config:
+      meta:
+        <<: *meta
+        title: "町丁・字等別境界"
+    columns:
+      - name: key_code
+        meta:
+          title: KEY_CODE
+          description: "図形と集計データのリンクコード（PREF + KEYCODE2）"
+      - name: prefecture_code
+        meta:
+          title: 都道府県番号
+      - name: prefecture_name
+        meta:
+          title: 都道府県名
+      - name: city_code
+        meta:
+          title: 市区町村番号
+      - name: city_name
+        meta:
+          title: 市区町村名
+      - name: area_name
+        meta:
+          title: 町丁・字等名称
+      - name: kigo_e
+        meta:
+          title: 特殊記号E
+          description: "町丁字の重複フラグ。NULL=重複なし（境界が1つ）、E1=重複あり・代表境界（人口最多）。E2以降（飛び地等の重複ポリゴン）は除外済み"
+      - name: kigo_d
+        meta:
+          title: 特殊記号D
+          description: "D=飛び地、D1=抜け地"
+      - name: kigo_i
+        meta:
+          title: 特殊記号I
+          description: "I=島"
+      - name: jinko
+        meta:
+          title: 人口
+      - name: setai
+        meta:
+          title: 世帯数
+      - name: x_code
+        meta:
+          title: 図形中心点X座標
+          description: "10進経度"
+      - name: y_code
+        meta:
+          title: 図形中心点Y座標
+          description: "10進緯度"
+      - name: area_m2
+        meta:
+          title: 面積（㎡）
+          description: "図郭による算出値。公式面積とは一致しない"
+      - name: geometry
+        meta:
+          title: 境界ポリゴン

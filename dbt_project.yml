@@ -16,3 +16,8 @@ models:
   e_stat:
     +database: e_stat
     +materialized: view
+    boundary:
+      raw:
+        +materialized: table
+      stg:
+        +materialized: table
