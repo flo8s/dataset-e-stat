@@ -1,40 +1,15 @@
 version: 2
 
 models:
-  - name: stats_field
-    description: |
-      [e-Stat API 統計分野一覧](https://www.e-stat.go.jp/api/api-info/statsfield/)を基に作成したマスタテーブル。
-    access: public
-    config:
-      meta:
-        title: "統計分野一覧"
-        published: true
-        source_url: "https://www.e-stat.go.jp/api/api-info/statsfield/"
-        tags: ["e-stat", "メタデータ"]
-    columns:
-      - name: main_category_code
-        meta:
-          title: 統計大分野コード
-      - name: main_category
-        meta:
-          title: 統計大分野
-      - name: sub_category_code
-        meta:
-          title: 統計小分野コード
-      - name: sub_category
-        meta:
-          title: 統計小分野
-
-  - name: stats_list
+  - name: stg_stats_list
     description: |
       e-Stat API getStatsList から取得した統計表情報。
       e-Stat で提供している統計表の情報（政府統計名、作成機関、統計表題名、調査年月、公開日、統計分野等）を提供する。
       API仕様: https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0#api_2_1
-    access: public
     config:
       meta:
         title: "統計表一覧"
-        published: true
+        published: false
         source_url: "https://www.e-stat.go.jp/stat-search/database"
         tags: ["e-stat", "メタデータ"]
     columns:
@@ -114,16 +89,15 @@ models:
         meta:
           title: 総件数
 
-  - name: meta_info
+  - name: raw_meta_info
     description: |
       e-Stat API getMetaInfo から取得したメタ情報。
       各統計表の表章事項・分類事項・地域事項・時間軸事項のコード、名称、単位、階層レベル等を提供する。
       API仕様: https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0#api_2_5
-    access: public
     config:
       meta:
-        title: "メタ情報"
-        published: true
+        title: "メタ情報 (raw)"
+        published: false
         source_url: "https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0#api_2_5"
         tags: ["e-stat", "メタデータ"]
     columns:
@@ -157,3 +131,62 @@ models:
       - name: add_inf
         meta:
           title: 追加情報
+
+  - name: stats_catalog
+    description: |
+      統計表カタログ。getStatsList の統計表メタデータと getMetaInfo の分類軸名を
+      統計表単位で結合し、政府統計名・統計分野・集計地域区分・分類軸名で横断検索できる。
+      分類項目の詳細は raw_meta_info を参照。
+    access: public
+    config:
+      meta:
+        title: "統計表カタログ"
+        published: true
+        source_url: "https://www.e-stat.go.jp/stat-search/database"
+        tags: ["e-stat", "統計表", "カタログ"]
+    columns:
+      - name: stats_data_id
+        meta:
+          title: 統計表ID
+      - name: stat_code
+        meta:
+          title: 政府統計コード
+      - name: stat_name
+        meta:
+          title: 政府統計名
+      - name: gov_org_name
+        meta:
+          title: 作成機関名
+      - name: statistics_name
+        meta:
+          title: 提供統計名
+      - name: table_title
+        meta:
+          title: 統計表題名
+      - name: main_category_code
+        meta:
+          title: 統計大分野コード
+      - name: main_category
+        meta:
+          title: 統計大分野
+      - name: sub_category_code
+        meta:
+          title: 統計小分野コード
+      - name: sub_category
+        meta:
+          title: 統計小分野
+      - name: collect_area
+        meta:
+          title: 集計地域区分
+      - name: cycle
+        meta:
+          title: 提供周期
+      - name: survey_date
+        meta:
+          title: 調査年月
+      - name: updated_date
+        meta:
+          title: 更新日
+      - name: class_names
+        meta:
+          title: 分類軸名リスト (area/time除外)

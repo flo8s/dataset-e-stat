@@ -3,7 +3,7 @@
 -- item_catalog に存在しない stats_data_id があればテスト失敗。
 WITH expected AS (
     SELECT DISTINCT id
-    FROM {{ ref('stats_list') }}
+    FROM {{ ref('stg_stats_list') }}
     WHERE stat_code = '00200502'
       AND id IN (
         '0000010101', '0000010102', '0000010103', '0000010104', '0000010105',
