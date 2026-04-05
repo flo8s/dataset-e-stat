@@ -10,6 +10,7 @@ e_stat:
       extensions:
         - httpfs
         - ducklake
+        - spatial
       settings:
         s3_url_style: path
         s3_access_key_id: "{{ env_var('FDL_S3_ACCESS_KEY_ID', '') }}"

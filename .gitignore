@@ -17,6 +17,10 @@ package-lock.yml
 # Environment
 .env
 
+# Data (downloaded at runtime)
+data/
+*.duckdb
+
 # Cache
 .stats_list_cache.json
 
