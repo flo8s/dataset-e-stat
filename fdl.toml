@@ -1,5 +1,6 @@
 name = "e_stat"
 catalog = "sqlite"
+command = "python main.py"
 
 [targets.default]
 url = "s3://${FDL_S3_BUCKET}"
@@ -23,3 +24,4 @@ repository_url = "https://github.com/flo8s/dataset-e-stat"
 [meta.schemas]
 main.title = "e-Stat 統計データ"
 ssds.title = "社会・人口統計体系"
+boundary.title = "境界データ"
