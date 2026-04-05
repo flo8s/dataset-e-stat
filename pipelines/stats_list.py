@@ -77,6 +77,7 @@ def fetch_all_ids(app_id: str, cache_ttl_hours: int | None = None) -> List[str]:
     )
     if tables is None:
         client = EstatApiClient(app_id=app_id, timeout=300)
+        logger.info("getStatsList: fetching...")
         tables = _fetch(client)
         _save_cache(tables)
     ids = list(set(t["@id"] for t in tables))
