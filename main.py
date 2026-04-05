@@ -55,9 +55,9 @@ def main():
     info = pipeline.run(stats_list_resource(app_id))
     logger.info(f"  {info}")
 
-    # 3. メタ情報 (直近30日間に更新された統計表のみ)
+    # 3. メタ情報 (直近3日間に更新された統計表のみ)
     logger.info("3/5: meta_info (メタ情報)")
-    updated_ids = fetch_updated_ids(app_id, days=30)
+    updated_ids = fetch_updated_ids(app_id, days=3)
     if updated_ids:
         info = pipeline.run(meta_info_resource(app_id, updated_ids))
         logger.info(f"  {info}")

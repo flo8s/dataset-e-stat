@@ -1,0 +1,22 @@
+name: Sync
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+  schedule:
+    - cron: "0 19 * * *" # 毎日 04:00 JST
+  workflow_dispatch:
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    uses: flo8s/dataset-shared/.github/workflows/sync.yml@main
+    with:
+      dataset_name: e_stat
+      s3_bucket: ${{ vars.S3_BUCKET }}
+    secrets: inherit
