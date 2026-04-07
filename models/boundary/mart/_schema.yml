@@ -71,3 +71,4 @@ models:
       - name: geometry
         meta:
           title: 境界ポリゴン
+          description: "CRS: EPSG:4612 (JGD2011)"
