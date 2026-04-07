@@ -1,11 +1,17 @@
 {{ config(materialized='table') }}
 
-WITH class_names AS (
-    SELECT
-        stats_data_id,
-        LIST(DISTINCT class_name ORDER BY class_name) AS class_names
+WITH class_deduped AS (
+    SELECT stats_data_id, class_name, MIN(class_id) AS class_id
     FROM {{ ref('raw_meta_info') }}
     WHERE class_id NOT IN ('area', 'time')
+    GROUP BY stats_data_id, class_name
+),
+
+class_names AS (
+    SELECT
+        stats_data_id,
+        LIST(class_name ORDER BY class_id) AS class_names
+    FROM class_deduped
     GROUP BY stats_data_id
 ),
 
