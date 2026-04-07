@@ -4,7 +4,7 @@ version: "1.0.0"
 profile: "e_stat"
 
 model-paths: ["models"]
-macro-paths: ["macros"]
+macro-paths: ["macros", "shared/macros"]
 clean-targets: ["target", "dbt_packages"]
 
 seeds:
