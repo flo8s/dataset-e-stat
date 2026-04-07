@@ -3,7 +3,7 @@
 WITH class_names AS (
     SELECT
         stats_data_id,
-        LIST(DISTINCT class_name ORDER BY class_id) AS class_names
+        LIST(DISTINCT class_name ORDER BY class_name) AS class_names
     FROM {{ ref('raw_meta_info') }}
     WHERE class_id NOT IN ('area', 'time')
     GROUP BY stats_data_id
