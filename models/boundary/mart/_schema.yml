@@ -20,9 +20,9 @@ models:
         title: "町丁・字等別境界"
     columns:
       - name: key_code
+        description: "図形と集計データのリンクコード（PREF + KEYCODE2）"
         meta:
           title: KEY_CODE
-          description: "図形と集計データのリンクコード（PREF + KEYCODE2）"
       - name: prefecture_code
         meta:
           title: 都道府県番号
@@ -39,36 +39,38 @@ models:
         meta:
           title: 町丁・字等名称
       - name: kigo_e
+        description: "町丁・字等の重複フラグ。同一市区町村内に同一の町丁・字等番号を持つ境界が複数存在する場合、境界ごとの基本単位区（調査区）人口が多い順にE1から付与。人口が同じ場合は面積の広い順。島と陸地がある場合は陸地を優先。本モデルではE2以降を除外済み"
         meta:
           title: 特殊記号E
-          description: "町丁字の重複フラグ。NULL=重複なし（境界が1つ）、E1=重複あり・代表境界（人口最多）。E2以降（飛び地等の重複ポリゴン）は除外済み"
       - name: kigo_d
+        description: "D=飛び地、D1=抜け地（飛び地）"
         meta:
           title: 特殊記号D
-          description: "D=飛び地、D1=抜け地"
       - name: kigo_i
+        description: "I=島"
         meta:
           title: 特殊記号I
-          description: "I=島"
       - name: jinko
+        description: "当該町丁・字等の人口。元データではKIGO_E=En(n≧2)の場合は0"
         meta:
           title: 人口
       - name: setai
+        description: "当該町丁・字等の世帯数。元データではKIGO_E=En(n≧2)の場合は0"
         meta:
           title: 世帯数
       - name: x_code
+        description: "10進経度"
         meta:
           title: 図形中心点X座標
-          description: "10進経度"
       - name: y_code
+        description: "10進緯度"
         meta:
           title: 図形中心点Y座標
-          description: "10進緯度"
       - name: area_m2
+        description: "図郭による算出値。公式面積とは一致しない"
         meta:
           title: 面積（㎡）
-          description: "図郭による算出値。公式面積とは一致しない"
       - name: geometry
+        description: "CRS: EPSG:4612 (JGD2011)"
         meta:
           title: 境界ポリゴン
-          description: "CRS: EPSG:4612 (JGD2011)"
