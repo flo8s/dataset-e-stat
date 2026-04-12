@@ -8,8 +8,10 @@ https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBounda
 """
 
 import logging
+import time
 import zipfile
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 logger = logging.getLogger("pipelines")
@@ -73,6 +75,31 @@ PREFECTURES = [
 ]
 # fmt: on
 
+_TRANSIENT_HTTP_CODES = {502, 503, 504}
+_MAX_RETRIES = 4
+_TIMEOUT = 60  # seconds
+
+
+def _download_with_retry(req: Request, dest: Path) -> None:
+    """Download a URL to a file with retry on transient errors."""
+    for attempt in range(_MAX_RETRIES):
+        try:
+            with urlopen(req, timeout=_TIMEOUT) as resp, open(dest, "wb") as f:
+                f.write(resp.read())
+            return
+        except HTTPError as e:
+            if e.code not in _TRANSIENT_HTTP_CODES or attempt == _MAX_RETRIES - 1:
+                raise
+            wait = 2 ** attempt
+            logger.warning(f"  HTTP {e.code}, retry in {wait}s ({attempt + 1}/{_MAX_RETRIES})")
+            time.sleep(wait)
+        except URLError as e:
+            if attempt == _MAX_RETRIES - 1:
+                raise
+            wait = 2 ** attempt
+            logger.warning(f"  {e.reason}, retry in {wait}s ({attempt + 1}/{_MAX_RETRIES})")
+            time.sleep(wait)
+
 
 def download_boundary(dest_dir: str) -> None:
     """全都道府県の境界 GML をダウンロードし展開する。
@@ -94,8 +121,7 @@ def download_boundary(dest_dir: str) -> None:
 
         logger.info(f"  downloading {pref['code']}...")
         req = Request(url, headers={"User-Agent": "dataset-e-stat"})
-        with urlopen(req) as resp, open(zip_path, "wb") as f:
-            f.write(resp.read())
+        _download_with_retry(req, zip_path)
 
         with zipfile.ZipFile(zip_path) as zf:
             zf.extractall(dest)
