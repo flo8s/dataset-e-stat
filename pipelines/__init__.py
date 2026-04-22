@@ -42,7 +42,6 @@ SOURCE_SCHEMA = "_source"
 def create_pipeline():
     """共通の dlt パイプラインを作成する。"""
     catalog = str(Path(os.environ["FDL_CATALOG"]).resolve())
-    prefix = "sqlite" if catalog.endswith(".sqlite") else "duckdb"
     data_path = os.environ["FDL_DATA_PATH"]
 
     storage = data_path
@@ -65,7 +64,7 @@ def create_pipeline():
         pipeline_name="estat",
         destination=ducklake(
             credentials=DuckLakeCredentials(
-                catalog=f"{prefix}:///{catalog}",
+                catalog=f"sqlite:///{catalog}",
                 storage=storage,
             ),
             override_data_path=True,

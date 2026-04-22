@@ -1,5 +1,4 @@
 name = "e_stat"
-catalog = "sqlite"
 command = "python main.py"
 
 [targets.default]
