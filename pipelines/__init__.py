@@ -4,7 +4,6 @@ import logging
 import logging.config
 import os
 from enum import IntEnum
-from pathlib import Path
 
 import dlt
 from dlt.destinations import ducklake
@@ -41,16 +40,16 @@ SOURCE_SCHEMA = "_source"
 
 def create_pipeline():
     """共通の dlt パイプラインを作成する。"""
-    catalog = str(Path(os.environ["FDL_CATALOG"]).resolve())
-    data_path = os.environ["FDL_DATA_PATH"]
+    catalog_url = os.environ["FDL_CATALOG_URL"]
+    data_url = os.environ["FDL_DATA_URL"]
 
-    storage = data_path
-    if data_path.startswith("s3://"):
+    storage = data_url
+    if data_url.startswith("s3://"):
         from dlt.common.configuration.specs import AwsCredentials
         from dlt.common.storages.configuration import FilesystemConfiguration
 
         storage = FilesystemConfiguration(
-            bucket_url=data_path,
+            bucket_url=data_url,
             credentials=AwsCredentials(
                 aws_access_key_id=os.environ["FDL_S3_ACCESS_KEY_ID"],
                 aws_secret_access_key=os.environ["FDL_S3_SECRET_ACCESS_KEY"],
@@ -64,7 +63,7 @@ def create_pipeline():
         pipeline_name="estat",
         destination=ducklake(
             credentials=DuckLakeCredentials(
-                catalog=f"sqlite:///{catalog}",
+                catalog=catalog_url,
                 storage=storage,
             ),
             override_data_path=True,
