@@ -4,11 +4,21 @@
 2. stats_list:      統計表カタログ取得 (getStatsList)
 3. meta_info:       メタ情報取得 (getMetaInfo) — 直近更新分のみ
 4. ssds:            社会・人口統計体系データ取得 (getStatsData)
-5. dbt:             dbt ビルド
+5. dbt build
+6. snapshot MotherDuck catalog to R2 (same Python process)
+
+Note: dlt pipelines/__init__.py still reads FDL_* env vars. When you next
+run a full ingest, port pipelines/__init__.py to MotherDuck's DuckLake
+destination (or set FDL_CATALOG_URL = 'ducklake:md:__ducklake_metadata_e_stat'
+and FDL_DATA_URL = 'r2://queria/e_stat/ducklake.duckdb.files/').
 """
 
+from __future__ import annotations
+
+import importlib.util
 import logging
 import os
+import sys
 from pathlib import Path
 
 import yaml
@@ -22,41 +32,32 @@ from pipelines.stats_list import fetch_updated_ids, stats_list_resource
 
 logger = logging.getLogger("pipelines")
 
-
-def dbt_build():
-    dbt = dbtRunner()
-
-    result = dbt.invoke(["deps"])
-    if not result.success:
-        raise SystemExit("dbt deps failed")
-
-    result = dbt.invoke(["build"])
-    if not result.success:
-        raise SystemExit("dbt build failed")
-
-    result = dbt.invoke(["docs", "generate"])
-    if not result.success:
-        raise SystemExit("dbt docs generate failed")
+SHARED_SCRIPTS = Path(__file__).resolve().parent / "shared" / "scripts"
+_spec = importlib.util.spec_from_file_location(
+    "snapshot_to_r2", SHARED_SCRIPTS / "snapshot-to-r2.py"
+)
+assert _spec and _spec.loader
+snapshot_to_r2 = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(snapshot_to_r2)
 
 
-def main():
+def main() -> None:
+    target = os.environ.get("DBT_TARGET", sys.argv[1] if len(sys.argv) > 1 else "default")
+
     with open(Path(__file__).parent / "tables.yml") as f:
         tables_config = yaml.safe_load(f)
 
-    # 1. 国勢調査境界データ (Shapefile DL)
-    logger.info("1/5: census_boundary (国勢調査境界データ)")
+    logger.info("1/6: census_boundary (国勢調査境界データ)")
     download_boundary("data/census_boundary")
 
     pipeline = create_pipeline()
     app_id = os.environ["ESTAT_API_KEY"]
 
-    # 2. 統計表カタログ (全件取得)
-    logger.info("2/5: stats_list (統計表カタログ)")
+    logger.info("2/6: stats_list (統計表カタログ)")
     info = pipeline.run(stats_list_resource(app_id))
     logger.info(f"  {info}")
 
-    # 3. メタ情報 (直近3日間に更新された統計表のみ)
-    logger.info("3/5: meta_info (メタ情報)")
+    logger.info("3/6: meta_info (メタ情報)")
     updated_ids = fetch_updated_ids(app_id, days=3)
     if updated_ids:
         info = pipeline.run(meta_info_resource(app_id, updated_ids))
@@ -64,14 +65,23 @@ def main():
     else:
         logger.info("  skip (no updates)")
 
-    # 4. 社会・人口統計体系(SSDS) データ
-    logger.info("4/5: ssds (社会・人口統計体系)")
+    logger.info("4/6: ssds (社会・人口統計体系)")
     info = pipeline.run(create_source(app_id, tables_config))
     logger.info(f"  {info}")
 
-    # 5. dbt ビルド
-    logger.info("5/5: dbt build")
-    dbt_build()
+    logger.info("5/6: dbt build")
+    dbt = dbtRunner()
+    for cmd in (
+        ["deps"],
+        ["build", "--target", target],
+        ["docs", "generate", "--target", target],
+    ):
+        result = dbt.invoke(cmd)
+        if not result.success:
+            raise SystemExit(f"dbt {' '.join(cmd)} failed")
+
+    logger.info("6/6: snapshot to R2")
+    snapshot_to_r2.run(target)
 
 
 if __name__ == "__main__":
