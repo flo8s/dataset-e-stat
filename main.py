@@ -5,12 +5,7 @@
 3. meta_info:       メタ情報取得 (getMetaInfo) — 直近更新分のみ
 4. ssds:            社会・人口統計体系データ取得 (getStatsData)
 5. dbt build
-6. snapshot MotherDuck catalog to R2 (same Python process)
-
-Note: dlt pipelines/__init__.py still reads FDL_* env vars. When you next
-run a full ingest, port pipelines/__init__.py to MotherDuck's DuckLake
-destination (or set FDL_CATALOG_URL = 'ducklake:md:__ducklake_metadata_e_stat'
-and FDL_DATA_URL = 'r2://queria/e_stat/ducklake.duckdb.files/').
+6. snapshot Neon catalog (e_stat schema) to R2
 """
 
 from __future__ import annotations

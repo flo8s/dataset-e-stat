@@ -3,31 +3,41 @@ e_stat:
   outputs:
     default:
       type: duckdb
-      path: "md:?motherduck_token={{ env_var('MOTHERDUCK_TOKEN', '') }}"
-      database: e_stat
-      schema: main
+      path: ":memory:"
       threads: 4
       extensions:
         - httpfs
-        - motherduck
+        - postgres
         - ducklake
         - spatial
+      secrets:
+        - type: r2
+          key_id: "{{ env_var('QUERIA_S3_ACCESS_KEY_ID', '') }}"
+          secret: "{{ env_var('QUERIA_S3_SECRET_ACCESS_KEY', '') }}"
+          account_id: "{{ env_var('CF_ACCOUNT_ID', '') }}"
       attach:
-        - path: "md:e_stat"
+        - path: "ducklake:postgres:{{ env_var('NEON_DATABASE_URL', '') }}"
           alias: e_stat
-          is_ducklake: true
+          options:
+            data_path: "r2://{{ env_var('QUERIA_S3_BUCKET', '') }}/e_stat/ducklake.duckdb.files/"
+            meta_schema: "e_stat"
     local:
       type: duckdb
-      path: "md:?motherduck_token={{ env_var('MOTHERDUCK_TOKEN', '') }}"
-      database: e_stat
-      schema: main
+      path: ":memory:"
       threads: 4
       extensions:
         - httpfs
-        - motherduck
+        - postgres
         - ducklake
         - spatial
+      secrets:
+        - type: r2
+          key_id: "{{ env_var('QUERIA_S3_ACCESS_KEY_ID', '') }}"
+          secret: "{{ env_var('QUERIA_S3_SECRET_ACCESS_KEY', '') }}"
+          account_id: "{{ env_var('CF_ACCOUNT_ID', '') }}"
       attach:
-        - path: "md:dev_e_stat"
+        - path: "ducklake:postgres:{{ env_var('NEON_DATABASE_URL', '') }}"
           alias: e_stat
-          is_ducklake: true
+          options:
+            data_path: "r2://{{ env_var('QUERIA_DEV_S3_BUCKET', 'queria-dev') }}/e_stat/ducklake.duckdb.files/"
+            meta_schema: "dev_e_stat"

@@ -43,20 +43,17 @@ SOURCE_SCHEMA = "_source"
 
 _SHARED_SCRIPTS = Path(__file__).resolve().parent.parent / "shared" / "scripts"
 sys.path.insert(0, str(_SHARED_SCRIPTS))
-from queria_config import load_target, require_motherduck_token  # noqa: E402
+from queria_config import load_target  # noqa: E402
 
 
 def create_pipeline():
-    """dlt パイプラインを MotherDuck DuckLake + R2 (BYOB) で構成する。
+    """dlt パイプラインを Neon Postgres DuckLake + R2 (BYOB) で構成する。
 
-    - catalog: MotherDuck の内部 metadata DB (md:__ducklake_metadata_<db>)
+    - catalog: Neon Postgres、META_SCHEMA で dataset 分離
     - storage: R2 バケット (s3:// プロトコル + R2 endpoint で接続)
     """
     target_name = os.environ.get("DBT_TARGET", "default")
     target = load_target(target_name)
-    token = require_motherduck_token()
-    # dlt が motherduck 拡張から token を読み取れるよう環境変数で公開
-    os.environ.setdefault("MOTHERDUCK_TOKEN", token)
 
     from dlt.common.configuration.specs import AwsCredentials
     from dlt.common.storages.configuration import FilesystemConfiguration
@@ -77,8 +74,9 @@ def create_pipeline():
         pipeline_name="estat",
         destination=ducklake(
             credentials=DuckLakeCredentials(
-                catalog=f"md:__ducklake_metadata_{target.motherduck_db}",
+                catalog=target.neon_dsn,
                 storage=storage,
+                metadata_schema=target.meta_schema,
             ),
             override_data_path=True,
         ),
