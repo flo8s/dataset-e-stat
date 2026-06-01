@@ -1,13 +1,29 @@
 [project]
-name = "fdl-estat"
+name = "dataset-e-stat"
 version = "0.1.0"
-description = "e-Stat dataset for fdl"
+description = "e-Stat dataset"
 requires-python = ">=3.13"
 dependencies = [
-    "frozen-ducklake>=0.10.1",
     "dbt-core>=1.10.0",
     "dbt-duckdb>=1.10.0",
+    "duckdb>=1.5.0,<1.5.3",
+    "boto3>=1.35",
     "dlt[ducklake]>=1.17.0",
     "estat-api-dlt-helper>=0.3.0",
     "pyyaml>=6.0",
 ]
+
+[tool.queria]
+name = "e_stat"
+title = "e-Stat 統計データ"
+description = """e-Stat API から直接取得した日本の公的統計データ。
+このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。"""
+cover = "📊"
+tags = ["統計", "e-Stat", "人口", "社会"]
+license = "政府標準利用規約 第2.0版"
+license_url = "https://www.e-stat.go.jp/terms-of-use"
+repository_url = "https://github.com/flo8s/dataset-e-stat"
+schedule = "daily"
+
+[tool.queria.schemas.main]
+title = "メイン"
