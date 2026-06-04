@@ -27,3 +27,9 @@ schedule = "daily"
 
 [tool.queria.schemas.main]
 title = "メイン"
+
+[tool.queria.schemas.ssds]
+title = "社会・人口統計体系"
+
+[tool.queria.schemas.boundary]
+title = "国勢調査境界データ"
