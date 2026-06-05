@@ -74,9 +74,13 @@ def create_pipeline():
         pipeline_name="estat",
         destination=ducklake(
             credentials=DuckLakeCredentials(
+                # dlt 1.18+ では METADATA_SCHEMA を ducklake_name から導出する。
+                # 既存メタデータ (Postgres スキーマ = meta_schema) と整合させるため
+                # ducklake_name に meta_schema を渡す。ATTACH エイリアスも同名になり、
+                # dbt profiles.yml の alias: e_stat と一致する。
+                ducklake_name=target.meta_schema,
                 catalog=target.neon_dsn,
                 storage=storage,
-                metadata_schema=target.meta_schema,
             ),
             override_data_path=True,
         ),
