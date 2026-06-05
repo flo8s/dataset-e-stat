@@ -1,0 +1,32 @@
+name: Reset DuckLake (DESTRUCTIVE)
+
+# 破損した DuckLake カタログを初期化する破壊的操作。手動実行のみ。
+# Neon メタデータスキーマを DROP&再作成し、R2 の旧データファイルを削除する。
+# 実データは e-Stat が真のソースなので次回 sync で再構築される。
+# 安全装置: confirm に "RESET <meta_schema>" を入力しないと no-op で終了。
+on:
+  workflow_dispatch:
+    inputs:
+      meta_schema:
+        description: "初期化する Neon メタデータスキーマ (本番: e_stat / dev: dev_e_stat)"
+        default: "e_stat"
+        required: true
+      confirm:
+        description: 'リセット確認: "RESET e_stat" のように "RESET <meta_schema>" を入力'
+        required: true
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v7
+      - name: Reset DuckLake catalog (destructive)
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+          NEON_DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+          QUERIA_S3_ENDPOINT: ${{ secrets.QUERIA_S3_ENDPOINT }}
+          QUERIA_S3_BUCKET: ${{ vars.S3_BUCKET }}
+          QUERIA_S3_ACCESS_KEY_ID: ${{ secrets.QUERIA_S3_ACCESS_KEY_ID }}
+          QUERIA_S3_SECRET_ACCESS_KEY: ${{ secrets.QUERIA_S3_SECRET_ACCESS_KEY }}
+        run: uv run --no-project --with duckdb --with boto3 python scripts/reset_ducklake.py "${{ inputs.meta_schema }}"
