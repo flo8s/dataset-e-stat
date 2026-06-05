@@ -1,0 +1,12 @@
+# measures を持つ semantic model (small_area) があるため、MetricFlow は
+# DAY 粒度の time spine を必須とする。データセットの公開テーブルとして
+# 露出させないよう models/metricflow/ 配下に置き、schema を metricflow に
+# 寄せている (pyproject [tool.queria.schemas] 未登録のため公開 UI に出ない)。
+models:
+  - name: metricflow_time_spine
+    description: MetricFlow 用の日次 time spine
+    time_spine:
+      standard_granularity_column: date_day
+    columns:
+      - name: date_day
+        granularity: day
