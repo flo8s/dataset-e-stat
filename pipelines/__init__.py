@@ -55,6 +55,10 @@ def create_pipeline():
     target_name = os.environ.get("DBT_TARGET", "default")
     target = load_target(target_name)
 
+    # DuckLake へのコミットを直列化し、リモート Postgres カタログ
+    # (Neon, 高レイテンシ) でのスナップショット採番競合を減らす。
+    os.environ.setdefault("LOAD__WORKERS", "1")
+
     from dlt.common.configuration.specs import AwsCredentials
     from dlt.common.storages.configuration import FilesystemConfiguration
 
@@ -70,19 +74,25 @@ def create_pipeline():
         ),
     )
 
+    credentials = DuckLakeCredentials(
+        # dlt 1.18+ では METADATA_SCHEMA を ducklake_name から導出する。
+        # 既存メタデータ (Postgres スキーマ = meta_schema) と整合させるため
+        # ducklake_name に meta_schema を渡す。ATTACH エイリアスも同名になり、
+        # dbt profiles.yml の alias: e_stat と一致する。
+        ducklake_name=target.meta_schema,
+        catalog=target.neon_dsn,
+        storage=storage,
+    )
+    # 高レイテンシのリモート Postgres カタログ (Neon) では DuckLake の
+    # 楽観ロックによるコミットが衝突し、既定の retry=10 を超えて
+    # `Failed to commit DuckLake transaction` /
+    # `duplicate key ... ducklake_snapshot_pkey` で失敗することがある。
+    # リトライ回数を引き上げて吸収する (LOAD ducklake 後に SET GLOBAL される)。
+    # ref: https://github.com/duckdb/ducklake/issues/233 , /243 , /459
+    credentials.global_config = {"ducklake_max_retry_count": 100}
+
     return dlt.pipeline(
         pipeline_name="estat",
-        destination=ducklake(
-            credentials=DuckLakeCredentials(
-                # dlt 1.18+ では METADATA_SCHEMA を ducklake_name から導出する。
-                # 既存メタデータ (Postgres スキーマ = meta_schema) と整合させるため
-                # ducklake_name に meta_schema を渡す。ATTACH エイリアスも同名になり、
-                # dbt profiles.yml の alias: e_stat と一致する。
-                ducklake_name=target.meta_schema,
-                catalog=target.neon_dsn,
-                storage=storage,
-            ),
-            override_data_path=True,
-        ),
+        destination=ducklake(credentials=credentials, override_data_path=True),
         dataset_name=SOURCE_SCHEMA,
     )
