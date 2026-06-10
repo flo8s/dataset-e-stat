@@ -3,9 +3,7 @@
 import logging
 import logging.config
 import os
-import sys
 from enum import IntEnum
-from pathlib import Path
 
 import dlt
 from dlt.destinations import ducklake
@@ -41,55 +39,44 @@ logging.config.dictConfig(
 
 SOURCE_SCHEMA = "_source"
 
-_SHARED_SCRIPTS = Path(__file__).resolve().parent.parent / "shared" / "scripts"
-sys.path.insert(0, str(_SHARED_SCRIPTS))
-from queria_config import load_target  # noqa: E402
-
 
 def create_pipeline():
-    """dlt パイプラインを Neon Postgres DuckLake + R2 (BYOB) で構成する。
+    """dlt パイプラインを fdl の DuckLake (SQLite + R2) で構成する。
 
-    - catalog: Neon Postgres、META_SCHEMA で dataset 分離
-    - storage: R2 バケット (s3:// プロトコル + R2 endpoint で接続)
+    fdl run が注入する FDL_* 環境変数を使う:
+    - catalog: ローカル SQLite ライブカタログ (FDL_CATALOG_URL = sqlite:///...)
+    - storage: Parquet データの保存先 (FDL_DATA_URL、S3 ターゲットでは R2)
     """
-    target_name = os.environ.get("DBT_TARGET", "default")
-    target = load_target(target_name)
+    catalog_url = os.environ["FDL_CATALOG_URL"]
+    data_url = os.environ["FDL_DATA_URL"]
 
-    # DuckLake へのコミットを直列化し、リモート Postgres カタログ
-    # (Neon, 高レイテンシ) でのスナップショット採番競合を減らす。
+    # DuckLake へのコミットを直列化し、スナップショット採番の競合を防ぐ
+    # (SQLite カタログは単一ライター前提)。
     os.environ.setdefault("LOAD__WORKERS", "1")
 
-    from dlt.common.configuration.specs import AwsCredentials
-    from dlt.common.storages.configuration import FilesystemConfiguration
+    storage = data_url
+    if data_url.startswith("s3://"):
+        from dlt.common.configuration.specs import AwsCredentials
+        from dlt.common.storages.configuration import FilesystemConfiguration
 
-    bucket_url = f"s3://{target.s3_bucket}/{target.dataset}/ducklake.duckdb.files/"
-    storage = FilesystemConfiguration(
-        bucket_url=bucket_url,
-        credentials=AwsCredentials(
-            aws_access_key_id=target.s3_access_key_id,
-            aws_secret_access_key=target.s3_secret_access_key,
-            endpoint_url=target.s3_endpoint,
-            region_name="auto",
-            s3_url_style="path",
-        ),
-    )
+        storage = FilesystemConfiguration(
+            bucket_url=data_url,
+            credentials=AwsCredentials(
+                aws_access_key_id=os.environ["FDL_S3_ACCESS_KEY_ID"],
+                aws_secret_access_key=os.environ["FDL_S3_SECRET_ACCESS_KEY"],
+                endpoint_url=os.environ.get("FDL_S3_ENDPOINT"),
+                region_name="auto",
+                s3_url_style="path",
+            ),
+        )
 
     credentials = DuckLakeCredentials(
-        # dlt 1.18+ では METADATA_SCHEMA を ducklake_name から導出する。
-        # 既存メタデータ (Postgres スキーマ = meta_schema) と整合させるため
-        # ducklake_name に meta_schema を渡す。ATTACH エイリアスも同名になり、
-        # dbt profiles.yml の alias: e_stat と一致する。
-        ducklake_name=target.meta_schema,
-        catalog=target.neon_dsn,
+        # dlt 1.18+ では ATTACH エイリアスを ducklake_name から導出する。
+        # dbt profiles.yml の alias: e_stat と一致させる。
+        ducklake_name="e_stat",
+        catalog=catalog_url,
         storage=storage,
     )
-    # 高レイテンシのリモート Postgres カタログ (Neon) では DuckLake の
-    # 楽観ロックによるコミットが衝突し、既定の retry=10 を超えて
-    # `Failed to commit DuckLake transaction` /
-    # `duplicate key ... ducklake_snapshot_pkey` で失敗することがある。
-    # リトライ回数を引き上げて吸収する (LOAD ducklake 後に SET GLOBAL される)。
-    # ref: https://github.com/duckdb/ducklake/issues/233 , /243 , /459
-    credentials.global_config = {"ducklake_max_retry_count": 100}
 
     return dlt.pipeline(
         pipeline_name="estat",
