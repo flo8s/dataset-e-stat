@@ -2,7 +2,7 @@ name: Checkpoint
 
 on:
   schedule:
-    - cron: "0 18 1 * *" # 毎月1日 03:00 JST
+    - cron: "0 18 * * 6" # 毎週日曜 03:00 JST
   workflow_dispatch:
 
 jobs:
