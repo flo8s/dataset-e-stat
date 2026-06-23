@@ -3,7 +3,9 @@
 import logging
 import logging.config
 import os
+import tempfile
 from enum import IntEnum
+from pathlib import Path
 
 import dlt
 from dlt.destinations import ducklake
@@ -77,6 +79,23 @@ def create_pipeline():
         catalog=catalog_url,
         storage=storage,
     )
+
+    # ロード時の DuckDB メモリを境界化する。
+    # cpi (約1350万行) のような大規模テーブルは、行ごとに複製されるメタデータ
+    # struct (tab/cat01/area/time/stat_inf) のため初回フルロードのメモリが膨らみ、
+    # DuckDB が自前の memory_limit に達して OutOfMemoryException を投げる
+    # (GitHub ランナーで約12.4GiB)。
+    #   - preserve_insertion_order=false: 挿入順保持のための全行バッファリングを
+    #     やめ、ストリーミング挿入でピークメモリを下げる (DuckDB の INSERT OOM
+    #     対策として公式に推奨)。
+    #   - temp_directory: メモリ上限に達した演算子をディスクへスピルさせる
+    #     (ducklake は in-memory DuckDB 接続のため明示しないとスピルできない)。
+    spill_dir = Path(tempfile.gettempdir()) / "duckdb-estat-spill"
+    spill_dir.mkdir(parents=True, exist_ok=True)
+    credentials.global_config = {
+        "preserve_insertion_order": False,
+        "temp_directory": str(spill_dir),
+    }
 
     return dlt.pipeline(
         pipeline_name="estat",
