@@ -9,8 +9,10 @@ def _drop_stat_inf(table: pa.Table) -> pa.Table:
     """行ごとに複製される stat_inf (統計表メタ) 列を落とす。
 
     estat_api_dlt_helper は全行に同一の TABLE_INF struct (統計表名・調査日等、
-    約670バイト/行) を複製して載せる。stg / mart では未使用で、巨大テーブルでは
-    これがロード時の DuckDB メモリを支配し OOM の原因になるため除去する。
+    約670バイト/行で 1 行の約8割) を複製して載せる。この情報は別リソース由来の
+    main.stats_catalog / main.stg_stats_list に統計表単位で完全に含まれており、
+    stg / mart からは一切参照されない冗長な列。ロード時の DuckDB メモリを支配し
+    巨大テーブルでは OOM の原因になるため、全 SSDS テーブルで除去する。
     """
     if "stat_inf" in table.column_names:
         return table.drop_columns(["stat_inf"])
@@ -28,9 +30,8 @@ def _build_table(app_id: str, t: dict):
         if t.get("incremental")
         else None,
     )
-    if t.get("slim_metadata"):
-        resource = resource.add_map(_drop_stat_inf)
-    return resource
+    # stat_inf は全テーブルで冗長なため、テーブルを問わず常に除去する。
+    return resource.add_map(_drop_stat_inf)
 
 
 def create_source(app_id: str, tables_config: dict):
