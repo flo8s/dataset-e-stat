@@ -114,10 +114,8 @@ tables:
     incremental: true
 
   # 消費者物価指数（2020年基準）
-  # 約1350万行と巨大なため、未使用の stat_inf 列を落としてロード時メモリを抑える。
   - name: cpi
     description: 消費者物価指数（2020年基準）品目別価格指数
     statsDataId: "0003427113"
     merge_keys: [tab, cat01, area, time]
     incremental: true
-    slim_metadata: true
