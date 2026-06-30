@@ -1,10 +1,11 @@
 """e-Stat データパイプライン。
 
-1. census_boundary: 国勢調査境界データ取得 (Shapefile DL)
-2. stats_list:      統計表カタログ取得 (getStatsList)
-3. meta_info:       メタ情報取得 (getMetaInfo) — 直近更新分のみ
-4. ssds:            社会・人口統計体系データ取得 (getStatsData)
-5. dbt:             dbt ビルド
+1. census_boundary:   国勢調査境界データ取得 (Shapefile DL)
+2. stats_list:        統計表カタログ取得 (getStatsList)
+3. meta_info:         メタ情報取得 (getMetaInfo) — 直近更新分のみ
+4. ssds:              社会・人口統計体系データ取得 (getStatsData)
+5. census_small_area: 国勢調査小地域(町丁・字等)統計取得 (searchKind=2 + getStatsData)
+6. dbt:               dbt ビルド
 """
 
 import logging
@@ -16,6 +17,11 @@ from dbt.cli.main import dbtRunner
 
 from pipelines import create_pipeline
 from pipelines.census_boundary import download_boundary
+from pipelines.census_small_area import (
+    SMALL_AREA_TABLES,
+    create_small_area_source,
+    fetch_small_area_ids,
+)
 from pipelines.meta_info import meta_info_resource
 from pipelines.ssds import create_source
 from pipelines.stats_list import fetch_updated_ids, stats_list_resource
@@ -44,19 +50,19 @@ def main():
         tables_config = yaml.safe_load(f)
 
     # 1. 国勢調査境界データ (Shapefile DL)
-    logger.info("1/5: census_boundary (国勢調査境界データ)")
+    logger.info("1/6: census_boundary (国勢調査境界データ)")
     download_boundary("data/census_boundary")
 
     pipeline = create_pipeline()
     app_id = os.environ["ESTAT_API_KEY"]
 
     # 2. 統計表カタログ (全件取得)
-    logger.info("2/5: stats_list (統計表カタログ)")
+    logger.info("2/6: stats_list (統計表カタログ)")
     info = pipeline.run(stats_list_resource(app_id))
     logger.info(f"  {info}")
 
     # 3. メタ情報 (直近3日間に更新された統計表のみ)
-    logger.info("3/5: meta_info (メタ情報)")
+    logger.info("3/6: meta_info (メタ情報)")
     updated_ids = fetch_updated_ids(app_id, days=3)
     if updated_ids:
         info = pipeline.run(meta_info_resource(app_id, updated_ids))
@@ -65,12 +71,26 @@ def main():
         logger.info("  skip (no updates)")
 
     # 4. 社会・人口統計体系(SSDS) データ
-    logger.info("4/5: ssds (社会・人口統計体系)")
+    logger.info("4/6: ssds (社会・人口統計体系)")
     info = pipeline.run(create_source(app_id, tables_config))
     logger.info(f"  {info}")
 
-    # 5. dbt ビルド
-    logger.info("5/5: dbt build")
+    # 5. 国勢調査 小地域(町丁・字等)統計データ
+    logger.info("5/6: census_small_area (小地域統計)")
+    for spec in SMALL_AREA_TABLES:
+        ids = fetch_small_area_ids(app_id, spec["title_prefix"])
+        if ids:
+            info = pipeline.run(
+                create_small_area_source(
+                    app_id, ids, spec["name"], spec["primary_key"]
+                )
+            )
+            logger.info(f"  {spec['name']}: {info}")
+        else:
+            logger.info(f"  skip {spec['name']} (no tables)")
+
+    # 6. dbt ビルド
+    logger.info("6/6: dbt build")
     dbt_build()
 
 
