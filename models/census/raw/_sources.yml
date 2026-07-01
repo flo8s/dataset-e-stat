@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: estat_source
+    database: e_stat
+    schema: _source
+    tables:
+      - name: census_small_area_age
+      - name: census_small_area_household
+      - name: census_small_area_industry
+      - name: census_small_area_housing

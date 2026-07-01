@@ -30,6 +30,26 @@
 - unit: 単位（例: 「人」「km2」）
 - value: 統計値
 
+## 国勢調査 小地域集計（census スキーマ）
+
+令和2年国勢調査の町丁・字等別（小地域）集計です。area は同データセットの境界データ
+small_area の key_code と同一体系で、`key_code = area` で境界ポリゴンと結合できます。
+area には市区町村（5桁）と小地域（9桁/11桁）の各階層が含まれます。
+分類は cat01（主分類）、cat02（秘匿・合算区分: 無し/合算/秘匿）です。
+
+| テーブル | 内容 | cat01 | value |
+|---------|------|-------|-------|
+| census_small_area_age | 年齢（5歳階級・4区分）別、男女別人口 | 年齢区分 | 人口 |
+| census_small_area_household | 世帯の家族類型別一般世帯数 | 家族類型 | 一般世帯数 |
+| census_small_area_industry | 産業（大分類）別就業者数 | 産業大分類 | 就業者数 |
+| census_small_area_housing | 住宅の所有の関係別一般世帯数 | 住宅の種類・所有の関係 | 一般世帯数 |
+
+census_small_area_age は cat02 が男女区分（cat02→sex）、それ以外の3表は cat02 が
+秘匿・合算区分（cat02→secrecy）です。主分類の名称列はテーブルごとに age_class /
+family_type / industry / tenure として展開しています。
+
+出典: 総務省統計局 令和2年国勢調査 小地域集計（統計GIS）。https://www.e-stat.go.jp/gis
+
 ## ライセンス
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
