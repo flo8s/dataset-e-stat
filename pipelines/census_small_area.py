@@ -15,6 +15,7 @@ from estat_api_dlt_helper.api.client import EstatApiClient
 from estat_api_dlt_helper.models import estat_models
 
 from pipelines import EstatStatus
+from pipelines.ssds import drop_stat_inf
 
 # estat-api-dlt-helper (<=0.3.1) は TABLE_INF.COLLECT_AREA を必須とするが、小地域統計
 # (searchKind=2) の getStatsData レスポンスはこのフィールドを持たず parse に失敗する。
@@ -109,6 +110,10 @@ def create_small_area_source(
     各 statsDataId を個別リソースとして取得し、apply_hints で出力先テーブル名を
     揃えることで 1 テーブルへ merge する。primary_key に area を含めるため
     都道府県をまたいで行が重複することはない。
+
+    stat_inf は SSDS と同様に除去する。census_small_area_age (47都道府県で
+    1000万行超) では stat_inf を含んだままだと merge SQL が GitHub ランナーの
+    DuckDB memory_limit (約12.4GiB) を超えて OOM になる。
     """
     resources = []
     for sid in stats_data_ids:
@@ -120,6 +125,7 @@ def create_small_area_source(
             primary_key=primary_key,
             maximum_offset=maximum_offset,
         )
+        resource.add_map(drop_stat_inf)
         resource.apply_hints(table_name=table_name)
         resources.append(resource)
     return estat_source(tables=resources, app_id=app_id)
