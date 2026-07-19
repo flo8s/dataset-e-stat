@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths-ignore:
       - "*.md"
+      - "docs/**"
   schedule:
     - cron: "0 19 * * *" # 毎日 04:00 JST
   workflow_dispatch:
