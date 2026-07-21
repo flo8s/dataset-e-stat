@@ -1,0 +1,88 @@
+version: 2
+
+models:
+  - name: municipality
+    description: |
+      統計に用いる標準地域コードの現行一覧。都道府県・郡・市区町村を 5 桁の
+      標準地域コード (area_code) で収録する。国勢調査小地域・境界データ・社会人口
+      統計体系 (SSDS) など本データセットの各テーブルが用いる地域コードと同体系で、
+      コードから名称・よみがなを引くマスタとして使える。
+      全国地方公共団体コード (6 桁・チェックデジット付き) とは別体系。
+      出典: 総務省統計局 統計に用いる標準地域コード。
+      https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
+    access: public
+    config:
+      meta:
+        title: "統計に用いる標準地域コード"
+        published: true
+        source_url: "https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm"
+        tags: ["e-stat", "標準地域コード", "市区町村コード", "都道府県"]
+    columns:
+      - name: area_code
+        meta:
+          title: 標準地域コード（5桁）
+      - name: pref_code
+        meta:
+          title: 都道府県コード（2桁）
+      - name: pref_name
+        meta:
+          title: 都道府県名
+      - name: district_name
+        meta:
+          title: 郡・振興局・政令市名（区の場合は所属市。無い場合は空）
+      - name: municipality_name
+        meta:
+          title: 市区町村名
+      - name: yomigana
+        meta:
+          title: よみがな
+      - name: is_prefecture
+        meta:
+          title: 都道府県の合計行か（コード末尾3桁が000）
+
+  - name: municipality_change
+    description: |
+      統計に用いる標準地域コードの変更（廃置分合）履歴。平成19年（2007年）
+      4月2日以降に生じた市区町村の合併・編入・区の再編等を、旧コードから新コード
+      への対応として1件1行で収録する。改正事由 (reason) が合併・編入の内容を、
+      施行年月日 (effective_date) が発効日を示す。市区町村コードを持つ既存の時系列
+      （国勢調査小地域・SSDS 等）を合併をまたいで接続する横断キーとして使える。
+      収録範囲は総務省が機械可読形式で提供する2007年4月2日以降のみで、平成の大合併の
+      ピーク（1999〜2006年）は含まない。
+      出典: 総務省統計局 統計に用いる標準地域コード（平成19年4月2日以降の変更）。
+      https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
+    access: public
+    config:
+      meta:
+        title: "標準地域コードの変更（廃置分合）履歴"
+        published: true
+        source_url: "https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm"
+        tags: ["e-stat", "標準地域コード", "廃置分合", "市町村合併"]
+    columns:
+      - name: effective_date
+        meta:
+          title: 施行年月日
+      - name: pref_code
+        meta:
+          title: 都道府県コード（2桁）
+      - name: pref_name
+        meta:
+          title: 都道府県名
+      - name: old_code
+        meta:
+          title: 旧標準地域コード（5桁。新設の場合は空）
+      - name: old_name
+        meta:
+          title: 旧市区町村名（新設の場合は空）
+      - name: new_code
+        meta:
+          title: 新標準地域コード（5桁）
+      - name: new_name
+        meta:
+          title: 新市区町村名。編入・合併で消滅した場合は「削除」表記
+      - name: is_code_deleted
+        meta:
+          title: 当該コードが削除（編入・合併で消滅）されたか
+      - name: reason
+        meta:
+          title: 改正事由（合併・編入等の内容）

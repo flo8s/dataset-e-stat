@@ -50,6 +50,27 @@ family_type / industry / tenure として展開しています。
 
 出典: 総務省統計局 令和2年国勢調査 小地域集計（統計GIS）。https://www.e-stat.go.jp/gis
 
+## 統計に用いる標準地域コード（code スキーマ）
+
+都道府県・市区町村を 5 桁で表す「統計に用いる標準地域コード」の現行一覧と、
+その変更（廃置分合）履歴です。area は census / boundary / SSDS の各テーブルが
+用いる地域コードと同一体系で、コードから名称を引くマスタとして使えます。
+全国地方公共団体コード（6 桁・チェックデジット付き）とは別体系です。
+
+| テーブル | 内容 | 主なカラム |
+|---------|------|-----------|
+| municipality | 現行の標準地域コード一覧 | area_code / pref_name / district_name / municipality_name / yomigana |
+| municipality_change | コード変更（廃置分合）履歴 | effective_date / old_code / new_code / is_code_deleted / reason |
+
+municipality_change は旧コードから新コードへの対応を 1 件 1 行で収録します。編入・
+合併で消滅したコードは new_name が「削除」表記になり is_code_deleted が真になります。
+市区町村コード付きの時系列を合併をまたいで接続する横断キーとして使えます。
+収録範囲は総務省が機械可読形式で提供する平成19年（2007年）4月2日以降の変更のみで、
+平成の大合併のピーク（1999〜2006年）は含みません。
+
+出典: 総務省統計局 統計に用いる標準地域コード。
+https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
+
 ## ライセンス
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
