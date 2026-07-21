@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: raw_municipality
+  - name: raw_municipality_change
