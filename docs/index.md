@@ -34,16 +34,21 @@ ssds スキーマの22テーブルはすべて同じ8カラムです。指標を
 - unit: 単位（例: `人`）
 - value: 統計値
 
-## 重要: 同じ指標が複数行になることがある
+## 行の粒度
 
-SSDS は複数の出典統計表を束ねているため、同一の `cat01` × `area` × `year` に対して値の等しい行が複数存在することがあります。集計時は `MAX(value)` や `DISTINCT` で重ねを取り除いてください。
+ssds の22テーブルは `cat01` × `area` × `time_name` で一意です。同じ指標・同じ地域・同じ時点の行は1行しかないので、`SUM` や `JOIN` の前に重複を取り除く必要はありません。
+
+2026年7月まで、同一条件で値の等しい行が最大3行返ることがありました。現在は解消しています。`MAX(value)` や `DISTINCT` で重複を除いている既存のクエリは、1行に対する演算になるだけなのでそのままでも正しく動きます。
+
+なお `area_name` には集計行が含まれます。都道府県テーブルには `全国`、市区町村テーブルには政令指定都市の市全体（例: `愛知県 名古屋市`）と `東京都 特別区部` が入っており、個別の地域と一緒に `SUM` すると二重計上になります。
 
 ```sql
--- 重複の確認（同一条件で複数行が返る）
-SELECT cat01, area_name, year, COUNT(*) AS rows, COUNT(DISTINCT value) AS distinct_values
+-- 全国の集計行を除いて都道府県だけを合計する
+SELECT year, SUM(value) AS population
 FROM e_stat.ssds.a_pref_population
-WHERE cat01 = 'A1101' AND area_name = '全国' AND year = 2024
-GROUP BY cat01, area_name, year
+WHERE cat01 = 'A1101' AND area_name <> '全国'
+GROUP BY year
+ORDER BY year
 ```
 
 ## 指標を探す: item_catalog
