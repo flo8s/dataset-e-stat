@@ -23,3 +23,12 @@ models:
   - name: stg_municipal_health
   - name: stg_municipal_welfare
   - name: stg_municipal_safety
+  - name: stg_item_lookup
+    description: |
+      mart のビューが item_name / unit を引くための、item_code で一意な参照表。
+      item_catalog は掲載統計表ごとに行を持つため、直接 JOIN すると観測値が複製される。
+    columns:
+      - name: item_code
+        data_tests:
+          - unique
+          - not_null
