@@ -1,0 +1,36 @@
+schema: ssds
+name: g_pref_culture
+title: G 文化・スポーツ（都道府県）
+description: '社会・人口統計体系 G 文化・スポーツ（都道府県）。
+
+  投票率、宿泊者数（国内・外国人）、客室稼働率等の指標を収録。
+
+  主な出典: 衆議院議員選挙、宿泊旅行統計調査。
+
+  https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010107
+
+  項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/G'
+keywords:
+  - e-stat
+  - 社会・人口統計体系
+  - 都道府県
+published: true
+sources:
+  - path: https://www.e-stat.go.jp/statistics/00200502
+fields:
+  - name: cat01
+    title: 分類事項コード
+  - name: item_name
+    title: 分類事項名
+  - name: area
+    title: 地域コード
+  - name: area_name
+    title: 地域名
+  - name: time_name
+    title: 時間軸名
+  - name: year
+    title: 年
+  - name: unit
+    title: 単位
+  - name: value
+    title: 統計値

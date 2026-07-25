@@ -1,0 +1,35 @@
+schema: main
+name: raw_meta_info
+title: メタ情報 (raw)
+description: 'e-Stat API getMetaInfo から取得したメタ情報。
+
+  各統計表の表章事項・分類事項・地域事項・時間軸事項のコード、名称、単位、階層レベル等を提供する。
+
+  API仕様: https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0#api_2_5'
+keywords:
+  - e-stat
+  - メタデータ
+published: false
+sources:
+  - path: https://www.e-stat.go.jp/api/api-info/e-stat-manual3-0#api_2_5
+fields:
+  - name: stats_data_id
+    title: 統計表ID
+  - name: class_id
+    title: 分類軸ID (tab, cat01〜cat15, area, time)
+  - name: class_name
+    title: 分類軸名
+  - name: class_description
+    title: 分類軸の解説
+  - name: item_code
+    title: 項目コード
+  - name: item_name
+    title: 項目名
+  - name: level
+    title: 階層レベル
+  - name: unit
+    title: 単位
+  - name: parent_code
+    title: 親コード
+  - name: add_inf
+    title: 追加情報

@@ -1,0 +1,36 @@
+schema: ssds
+name: a_pref_population
+title: A 人口・世帯（都道府県）
+description: '社会・人口統計体系 A 人口・世帯（都道府県）。
+
+  総人口、年齢別人口、世帯数、婚姻、出生・死亡、転入・転出等の指標を収録。
+
+  主な出典: 国勢調査、人口推計、人口動態統計、住民基本台帳。
+
+  https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010101
+
+  項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/A'
+keywords:
+  - e-stat
+  - 社会・人口統計体系
+  - 都道府県
+published: true
+sources:
+  - path: https://www.e-stat.go.jp/statistics/00200502
+fields:
+  - name: cat01
+    title: 分類事項コード
+  - name: item_name
+    title: 分類事項名
+  - name: area
+    title: 地域コード
+  - name: area_name
+    title: 地域名
+  - name: time_name
+    title: 時間軸名
+  - name: year
+    title: 年
+  - name: unit
+    title: 単位
+  - name: value
+    title: 統計値
