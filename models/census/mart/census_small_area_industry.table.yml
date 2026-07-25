@@ -1,0 +1,45 @@
+schema: census
+name: census_small_area_industry
+title: 小地域別 産業大分類別就業者数（令和2年国勢調査）
+description: '令和2年国勢調査 小地域(町丁・字等)別 産業(大分類)別就業者数。
+
+  area は同データセットの境界データ small_area の key_code と同一体系で、
+
+  key_code = area で境界ポリゴン・人口・世帯数と結合できる。
+
+  area には市区町村(5桁)と小地域(9桁/11桁)の各階層が含まれる。
+
+  分類は cat01=産業大分類(総数・農業林業・製造業・卸売小売業 など)、
+
+  cat02=秘匿・合算区分(無し/合算/秘匿)。値は就業者数(人)。
+
+  出典: 総務省統計局 令和2年国勢調査 小地域集計（統計GIS）。
+
+  https://www.e-stat.go.jp/gis'
+keywords:
+  - e-stat
+  - 国勢調査
+  - 小地域
+  - 町丁字
+  - 就業者
+  - 産業
+published: true
+sources:
+  - path: https://www.e-stat.go.jp/gis
+fields:
+  - name: area
+    title: 地域コード（境界データ small_area の key_code と同一体系）
+  - name: area_name
+    title: 町丁・字等名称
+  - name: cat01
+    title: 産業大分類コード
+  - name: industry
+    title: 産業大分類名
+  - name: cat02
+    title: 秘匿・合算区分コード
+  - name: secrecy
+    title: 秘匿・合算区分名（無し/合算/秘匿）
+  - name: unit
+    title: 単位
+  - name: value
+    title: 就業者数

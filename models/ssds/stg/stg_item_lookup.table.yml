@@ -1,0 +1,13 @@
+schema: ssds
+name: stg_item_lookup
+description: 'mart のビューが item_name / unit を引くための、item_code で一意な参照表。
+
+  item_catalog は掲載統計表ごとに行を持つため、直接 JOIN すると観測値が複製される。'
+published: false
+fields:
+  - name: item_code
+    title: 指標コード
+  - name: item_name
+    title: 指標名
+  - name: unit
+    title: 単位

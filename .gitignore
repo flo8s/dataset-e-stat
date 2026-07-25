@@ -25,3 +25,4 @@ data/
 .stats_list_cache.json
 
 
+dist/

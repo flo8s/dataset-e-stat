@@ -1,0 +1,47 @@
+schema: cpi
+name: price_index
+title: 品目別価格指数（2020年基準）
+description: '消費者物価指数（2020年基準）。品目別価格指数を全国・地域・都市階級別の月次／年次で収録。
+
+  表章（tab）は「指数」「前月比・前年比・前年度比」「前年同月比」の3種類を含む。
+
+  品目（cat01）は総合・10大費目から個別品目までの790区分。
+
+  地域（area）は全国・都市階級・地方・都道府県庁所在市など67区分。
+
+  出典: 総務省統計局 消費者物価指数（2020年基準）。
+
+  https://www.e-stat.go.jp/stat-search/database?statdisp_id=0003427113
+
+  統計局ポータル: https://www.stat.go.jp/data/cpi/'
+keywords:
+  - e-stat
+  - 消費者物価指数
+  - 物価
+  - CPI
+published: true
+sources:
+  - path: https://www.e-stat.go.jp/stat-search/database?statdisp_id=0003427113
+fields:
+  - name: tab
+    title: 表章項目コード
+  - name: tab_name
+    title: 表章項目名（指数／前月比・前年比・前年度比／前年同月比）
+  - name: cat01
+    title: 品目コード
+  - name: item_name
+    title: 品目名
+  - name: area
+    title: 地域コード
+  - name: area_name
+    title: 地域名
+  - name: time
+    title: 時間軸コード
+  - name: time_name
+    title: 時間軸名
+  - name: year
+    title: 年
+  - name: unit
+    title: 単位
+  - name: value
+    title: 統計値

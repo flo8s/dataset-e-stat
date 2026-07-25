@@ -1,0 +1,36 @@
+schema: ssds
+name: c_pref_economy
+title: C 経済基盤（都道府県）
+description: '社会・人口統計体系 C 経済基盤（都道府県）。
+
+  県民所得、事業所数、農業・製造業・商業の生産額等の指標を収録。
+
+  主な出典: 県民経済計算、経済センサス、農林業センサス。
+
+  https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000010103
+
+  項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/C'
+keywords:
+  - e-stat
+  - 社会・人口統計体系
+  - 都道府県
+published: true
+sources:
+  - path: https://www.e-stat.go.jp/statistics/00200502
+fields:
+  - name: cat01
+    title: 分類事項コード
+  - name: item_name
+    title: 分類事項名
+  - name: area
+    title: 地域コード
+  - name: area_name
+    title: 地域名
+  - name: time_name
+    title: 時間軸名
+  - name: year
+    title: 年
+  - name: unit
+    title: 単位
+  - name: value
+    title: 統計値

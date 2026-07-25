@@ -1,0 +1,34 @@
+schema: ssds
+name: d_municipal_administration
+title: D 行政基盤（市区町村）
+description: '社会・人口統計体系 D 行政基盤（市区町村）。
+
+  歳入・歳出（目的別）等の指標を収録。廃置分合処理済データ。
+
+  https://www.e-stat.go.jp/stat-search/database?statdisp_id=0000020204
+
+  項目定義: https://www.e-stat.go.jp/koumoku/koumoku_teigi/D'
+keywords:
+  - e-stat
+  - 社会・人口統計体系
+  - 市区町村
+published: true
+sources:
+  - path: https://www.e-stat.go.jp/statistics/00200502
+fields:
+  - name: cat01
+    title: 分類事項コード
+  - name: item_name
+    title: 分類事項名
+  - name: area
+    title: 地域コード
+  - name: area_name
+    title: 地域名
+  - name: time_name
+    title: 時間軸名
+  - name: year
+    title: 年
+  - name: unit
+    title: 単位
+  - name: value
+    title: 統計値

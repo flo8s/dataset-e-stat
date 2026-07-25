@@ -1,0 +1,7 @@
+schema: metricflow
+name: metricflow_time_spine
+description: MetricFlow 用の日次 time spine
+published: false
+fields:
+  - name: date_day
+    title: 日付
