@@ -8,6 +8,4 @@ on:
 jobs:
   checkpoint:
     uses: queria-io/dataset-shared/.github/workflows/checkpoint.yml@main
-    with:
-      s3_bucket: ${{ vars.S3_BUCKET }}
     secrets: inherit

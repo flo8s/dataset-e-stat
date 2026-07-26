@@ -12,7 +12,7 @@ logs/
 package-lock.yml
 
 # DuckLake
-.fdl/
+.queria/
 
 # Environment
 .env

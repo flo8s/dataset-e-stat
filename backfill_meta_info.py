@@ -7,7 +7,7 @@ meta_info は write_disposition="merge" のため、中断して再実行して�
 既存データは保持される。
 
 使い方:
-    uv run fdl sync default -- python backfill_meta_info.py
+    uv run queria sync -- python backfill_meta_info.py
 """
 
 import logging

@@ -19,5 +19,4 @@ jobs:
     uses: queria-io/dataset-shared/.github/workflows/sync.yml@main
     with:
       dataset_name: e_stat
-      s3_bucket: ${{ vars.S3_BUCKET }}
     secrets: inherit
