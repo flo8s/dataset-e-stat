@@ -2,3 +2,4 @@ version: 2
 
 models:
   - name: raw_census_boundary
+  - name: raw_mesh_boundary
