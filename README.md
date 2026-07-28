@@ -71,6 +71,25 @@ municipality_change は旧コードから新コードへの対応を 1 件 1 行
 出典: 総務省統計局 統計に用いる標準地域コード。
 https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
 
+## 境界データ（boundary スキーマ）
+
+地図化・空間集計に使う区画のポリゴンです。統計値は持ちません。
+
+| テーブル | 内容 | 主なカラム |
+|---------|------|-----------|
+| small_area | 令和2年国勢調査 町丁・字等別境界 | key_code / prefecture_code / city_code / area_name / geometry |
+| mesh_1km | 標準地域メッシュ 3次メッシュ（1kmメッシュ）境界 | mesh_code / mesh1_code / mesh2_code / mesh3_code / geometry |
+
+mesh_1km は標準地域メッシュ（JIS X 0410）の区画そのものです。mesh_code は 8 桁の
+3次メッシュコードで、上位から 1次メッシュ（約80km四方・4桁）、2次メッシュ
+（約10km四方・2桁）、3次メッシュ（約1km四方・2桁）に分解できます。各桁は
+mesh1_code / mesh2_code / mesh3_code にも分けて持たせています。同じコード体系を使う
+メッシュ統計と `mesh_code` で結合して地図に載せられます。1 区画の大きさは緯度方向
+30 秒・経度方向 45 秒で、南鳥島・沖ノ鳥島を含む陸域の 1次メッシュ 176 区画分
+（501,600 メッシュ）を収録しています。座標系は EPSG:4612 です。
+
+出典: 総務省統計局 統計GIS 境界データ。https://www.e-stat.go.jp/gis
+
 ## ライセンス
 
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
