@@ -8,6 +8,13 @@ models:
       統計体系 (SSDS) など本データセットの各テーブルが用いる地域コードと同体系で、
       コードから名称・よみがなを引くマスタとして使える。
       全国地方公共団体コード (6 桁・チェックデジット付き) とは別体系。
+
+      都道府県・政令指定都市・行政区・郡/振興局/支庁・市区町村が同一テーブルに
+      同居しているため、どの階層の行かは area_kind で判別する。市区町村として
+      数える行は is_municipality が真の行 (政令指定都市を 1 団体として数え、
+      行政区は数えない)。東京の特別区 23 は市区町村として数え、その親にあたる
+      集計行「特別区部」(13100) は数えない。同じ「区」でも行政区と特別区で
+      扱いが逆になる点に注意。
       出典: 総務省統計局 統計に用いる標準地域コード。
       https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
     access: public
@@ -21,6 +28,9 @@ models:
       - name: area_code
         meta:
           title: 標準地域コード（5桁）
+        data_tests:
+          - unique
+          - not_null
       - name: pref_code
         meta:
           title: 都道府県コード（2桁）
@@ -29,16 +39,34 @@ models:
           title: 都道府県名
       - name: district_name
         meta:
-          title: 郡・振興局・政令市名（区の場合は所属市。無い場合は空）
+          title: 郡・振興局・政令市名（区の場合は所属市。無い場合は NULL）
       - name: municipality_name
         meta:
-          title: 市区町村名
+          title: 市区町村名（都道府県・郡・政令市の集計行では NULL）
       - name: yomigana
         meta:
           title: よみがな
       - name: is_prefecture
         meta:
           title: 都道府県の合計行か（コード末尾3桁が000）
+      - name: area_kind
+        meta:
+          title: 階層区分（prefecture / designated_city / ward / district / municipality）
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - prefecture
+                  - designated_city
+                  - ward
+                  - district
+                  - municipality
+      - name: is_municipality
+        meta:
+          title: 市区町村として数える行か（政令市は1団体、行政区は数えない）
+        data_tests:
+          - not_null
 
   - name: municipality_change
     description: |
