@@ -67,6 +67,18 @@ models:
           title: 市区町村として数える行か（政令市は1団体、行政区は数えない）
         data_tests:
           - not_null
+      - name: county_name
+        meta:
+          title: 郡名（郡に属さない場合は NULL。北海道は振興局・支庁で括られるため NULL）
+      - name: subprefecture_name
+        meta:
+          title: 振興局・支庁名（北海道のみ。それ以外は NULL）
+      - name: designated_city_name
+        meta:
+          title: 政令指定都市名（政令市の集計行と行政区のみ。それ以外は NULL）
+      - name: municipality_code
+        meta:
+          title: 所属する市区町村の標準地域コード（行政区は所属市、市区町村は自分自身、集計行は NULL）
 
   - name: municipality_change
     description: |
