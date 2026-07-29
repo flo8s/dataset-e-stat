@@ -59,8 +59,46 @@ family_type / industry / tenure として展開しています。
 
 | テーブル | 内容 | 主なカラム |
 |---------|------|-----------|
-| municipality | 現行の標準地域コード一覧 | area_code / pref_name / district_name / municipality_name / yomigana |
+| municipality | 現行の標準地域コード一覧 | area_code / pref_name / area_kind / is_municipality / municipality_code / municipality_name |
 | municipality_change | コード変更（廃置分合）履歴 | effective_date / old_code / new_code / is_code_deleted / reason |
+
+### 階層の判別
+
+municipality は都道府県・政令指定都市・行政区・郡/振興局/支庁・市区町村を同一テーブルに
+収録しています。どの階層の行かは `area_kind` で判別できます。
+
+| area_kind | 件数 | 内容 |
+|-----------|-----:|------|
+| prefecture | 47 | 都道府県の合計行 |
+| designated_city | 20 | 政令指定都市（行政区の親にあたる行） |
+| ward | 171 | 政令指定都市の行政区 |
+| district | 326 | 郡・振興局・支庁・特別区部（集計用の親行） |
+| municipality | 1,727 | 市区町村 |
+
+市区町村として数える行は `is_municipality` が真の行（1,747件）です。政令指定都市を
+1団体として数え、行政区は数えません。
+
+```sql
+SELECT * FROM municipality WHERE is_municipality;
+```
+
+東京の特別区23は市区町村として数え、その親にあたる集計行「特別区部」（13100）は
+数えません。同じ「区」でも行政区と特別区で扱いが逆になります。
+
+`municipality_code` は所属する市区町村のコードです。行政区は所属市を、市区町村と
+政令指定都市は自分自身を指します。行政区の粒度で来るデータを市区町村に寄せるときに、
+どのコードでも同じキーで束ねられます。
+
+```sql
+-- 行政区のコードでも市区町村のコードでも、同じ市区町村に寄る
+SELECT area_code, municipality_name, area_kind, municipality_code
+FROM municipality
+WHERE municipality_code = '22130';   -- 浜松市とその3行政区
+```
+
+`district_name` に同居していた郡名・振興局名・政令市名は `county_name` /
+`subprefecture_name` / `designated_city_name` に分けています。北海道の町村は
+振興局・支庁で括られていて郡名を持たないため、`county_name` は NULL になります。
 
 municipality_change は旧コードから新コードへの対応を 1 件 1 行で収録します。編入・
 合併で消滅したコードは new_name が「削除」表記になり is_code_deleted が真になります。
