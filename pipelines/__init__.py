@@ -43,14 +43,14 @@ SOURCE_SCHEMA = "_source"
 
 
 def create_pipeline():
-    """dlt パイプラインを fdl の DuckLake (SQLite + R2) で構成する。
+    """dlt パイプラインを queria の DuckLake (SQLite + R2) で構成する。
 
-    fdl run が注入する FDL_* 環境変数を使う:
-    - catalog: ローカル SQLite ライブカタログ (FDL_CATALOG_URL = sqlite:///...)
-    - storage: Parquet データの保存先 (FDL_DATA_URL、S3 ターゲットでは R2)
+    queria run が注入する QUERIA_* 環境変数を使う:
+    - catalog: ローカル SQLite ライブカタログ (QUERIA_CATALOG_URL = sqlite:///...)
+    - storage: Parquet データの保存先 (QUERIA_DATA_URL、R2)
     """
-    catalog_url = os.environ["FDL_CATALOG_URL"]
-    data_url = os.environ["FDL_DATA_URL"]
+    catalog_url = os.environ["QUERIA_CATALOG_URL"]
+    data_url = os.environ["QUERIA_DATA_URL"]
 
     # DuckLake へのコミットを直列化し、スナップショット採番の競合を防ぐ
     # (SQLite カタログは単一ライター前提)。
@@ -61,13 +61,16 @@ def create_pipeline():
         from dlt.common.configuration.specs import AwsCredentials
         from dlt.common.storages.configuration import FilesystemConfiguration
 
+        # 鍵は渡さない。dlt は既定チェーンから解決した認証情報を見つけると
+        # DuckDB 側に PROVIDER credential_chain / REFRESH auto の secret を書くので、
+        # 15 分で切れる一時認証情報でも取り直される (値を渡すと凍結される)。
+        # チェーンが辿るプロファイルは queria run が AWS_CONFIG_FILE と
+        # AWS_PROFILE で指す。実測: secret の provider=credential_chain
         storage = FilesystemConfiguration(
             bucket_url=data_url,
             credentials=AwsCredentials(
-                aws_access_key_id=os.environ["FDL_S3_ACCESS_KEY_ID"],
-                aws_secret_access_key=os.environ["FDL_S3_SECRET_ACCESS_KEY"],
-                endpoint_url=os.environ.get("FDL_S3_ENDPOINT"),
-                region_name="auto",
+                endpoint_url=os.environ.get("QUERIA_S3_ENDPOINT"),
+                region_name=os.environ.get("QUERIA_S3_REGION", "auto"),
                 s3_url_style="path",
             ),
         )
