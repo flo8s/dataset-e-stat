@@ -17,7 +17,8 @@ e-Stat（政府統計の総合窓口）の API と統計GIS から取得した�
 | cpi | 消費者物価指数 price_index |
 | main | 統計表カタログ stats_catalog |
 | census | 令和2年国勢調査 小地域集計 census_small_area_*（年齢・世帯・住宅・産業） |
-| boundary | 令和2年国勢調査 町丁・字等別境界 small_area |
+| boundary | 令和2年国勢調査 町丁・字等別境界 small_area、1kmメッシュ境界 mesh_1km |
+| code | 統計に用いる標準地域コード municipality と、その変更（廃置分合）履歴 municipality_change |
 
 11分野（A〜K）の詳細は各カテゴリのガイドを参照してください。
 
