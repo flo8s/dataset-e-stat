@@ -171,3 +171,90 @@ models:
       - name: value
         meta:
           title: 一般世帯数
+
+  - name: daytime_population_mesh_1km
+    description: |
+      1kmメッシュ別の昼間人口・夜間人口・昼夜間人口比率（推計値）。
+      昼間人口は公的統計として1kmメッシュ単位では公表されていないため、
+      令和2年国勢調査と令和3年経済センサス‐活動調査の地域メッシュ統計から推計している。
+      推計式:
+        残留人口 = 夜間人口 − 当地に常住する就業者・通学者（15歳以上、自宅従業を含む）
+        流入人口 = 経済センサス 第2次産業従業者数 + 第3次産業従業者数
+                   + 国勢調査 第1次産業就業者数（常住地）
+        昼間人口 = 残留人口 + 流入人口
+      さらに都道府県ごとに、合計が公表昼間人口（社会・人口統計体系 A6107、令和2年）と
+      一致するようスケーリングしている。未補正の値は
+      daytime_population_uncalibrated に残してある。
+      推計の限界: 高校・短大・大学への通学による流入は、学校所在地別の在学者数が
+      公的オープンデータに存在しないため再現できない。買い物客・観光客も含まない
+      （公表昼間人口も同じ）。
+      mesh_code は同データセットの境界データ mesh_1km と同一体系で、
+      mesh_code = mesh_code で結合して地図化・空間集計できる。
+      出典: 総務省統計局 令和2年国勢調査／令和3年経済センサス‐活動調査
+      に関する地域メッシュ統計（統計GIS）。
+      https://www.e-stat.go.jp/gis
+    access: public
+    config:
+      meta:
+        title: "1kmメッシュ別 昼間人口・夜間人口（推計）"
+        published: true
+        source_url: "https://www.e-stat.go.jp/gis"
+        tags: ["e-stat", "国勢調査", "経済センサス", "メッシュ", "昼間人口", "夜間人口", "GIS"]
+    columns:
+      - name: mesh_code
+        meta:
+          title: メッシュコード（境界データ mesh_1km と同一体系の8桁）
+      - name: nighttime_population
+        meta:
+          title: 夜間人口（常住人口。令和2年国勢調査の人口総数）
+      - name: daytime_population
+        meta:
+          title: 昼間人口（推計値。都道府県合計を公表値に合わせて補正済み）
+      - name: daytime_ratio
+        meta:
+          title: 昼夜間人口比率（％。昼間人口÷夜間人口×100。夜間人口0のメッシュは NULL）
+      - name: daytime_night_diff
+        meta:
+          title: 昼夜間人口差（昼間人口−夜間人口）
+      - name: daytime_population_uncalibrated
+        meta:
+          title: 昼間人口（都道府県補正をかける前の素推計）
+      - name: residents_working_or_studying
+        meta:
+          title: 当地に常住する就業者・通学者数（15歳以上、自宅従業を含む）
+      - name: students_commuting_out
+        meta:
+          title: 当地に常住する通学者数（15歳以上）
+      - name: employed_residents
+        meta:
+          title: 就業者数（常住地ベース）
+      - name: primary_industry_residents
+        meta:
+          title: 第1次産業就業者数（常住地ベース）
+      - name: non_labor_force
+        meta:
+          title: 非労働力人口（15歳以上）
+      - name: unemployed
+        meta:
+          title: 完全失業者数
+      - name: preschool_children
+        meta:
+          title: 未就学者数
+      - name: resident_students
+        meta:
+          title: 在学者数（常住地ベース、小学校〜大学院）
+      - name: resident_students_compulsory
+        meta:
+          title: 在学者数のうち小学校・中学校（常住地ベース）
+      - name: establishments
+        meta:
+          title: 事業所数（令和3年経済センサス‐活動調査、全産業）
+      - name: employees_total
+        meta:
+          title: 従業者数（令和3年経済センサス‐活動調査、全産業）
+      - name: employees_secondary
+        meta:
+          title: 従業者数のうち第2次産業
+      - name: employees_tertiary
+        meta:
+          title: 従業者数のうち第3次産業
