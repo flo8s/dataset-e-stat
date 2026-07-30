@@ -2,12 +2,13 @@
 
 1. census_boundary:    国勢調査境界データ取得 (Shapefile DL)
 2. mesh_boundary:      1kmメッシュ境界データ取得 (統計GIS GML DL)
-3. municipality_code:  統計に用いる標準地域コード取得 (総務省統計局 CSV/Excel DL)
-4. stats_list:         統計表カタログ取得 (getStatsList)
-5. meta_info:          メタ情報取得 (getMetaInfo) — 直近更新分のみ
-6. ssds:               社会・人口統計体系データ取得 (getStatsData)
-7. census_small_area:  国勢調査小地域(町丁・字等)統計取得 (searchKind=2 + getStatsData)
-8. dbt:                dbt ビルド
+3. mesh_stats:         1kmメッシュ統計値取得 (統計GIS CSV DL)
+4. municipality_code:  統計に用いる標準地域コード取得 (総務省統計局 CSV/Excel DL)
+5. stats_list:         統計表カタログ取得 (getStatsList)
+6. meta_info:          メタ情報取得 (getMetaInfo) — 直近更新分のみ
+7. ssds:               社会・人口統計体系データ取得 (getStatsData)
+8. census_small_area:  国勢調査小地域(町丁・字等)統計取得 (searchKind=2 + getStatsData)
+9. dbt:                dbt ビルド
 """
 
 import logging
@@ -25,6 +26,7 @@ from pipelines.census_small_area import (
     fetch_small_area_ids,
 )
 from pipelines.mesh_boundary import download_mesh_boundary
+from pipelines.mesh_stats import download_mesh_stats
 from pipelines.meta_info import meta_info_resource
 from pipelines.municipality_code import build_municipality_code
 from pipelines.ssds import create_source
@@ -54,27 +56,31 @@ def main():
         tables_config = yaml.safe_load(f)
 
     # 1. 国勢調査境界データ (Shapefile DL)
-    logger.info("1/8: census_boundary (国勢調査境界データ)")
+    logger.info("1/9: census_boundary (国勢調査境界データ)")
     download_boundary("data/census_boundary")
 
     # 2. 1kmメッシュ境界データ (統計GIS GML DL、API 不要)
-    logger.info("2/8: mesh_boundary (1kmメッシュ境界データ)")
+    logger.info("2/9: mesh_boundary (1kmメッシュ境界データ)")
     download_mesh_boundary("data/mesh_boundary")
 
-    # 3. 統計に用いる標準地域コード (総務省統計局 CSV/Excel DL、API 不要)
-    logger.info("3/8: municipality_code (統計に用いる標準地域コード)")
+    # 3. 1kmメッシュ統計値 (統計GIS CSV DL、API 不要)
+    logger.info("3/9: mesh_stats (1kmメッシュ統計値)")
+    download_mesh_stats("data/mesh_stats")
+
+    # 4. 統計に用いる標準地域コード (総務省統計局 CSV/Excel DL、API 不要)
+    logger.info("4/9: municipality_code (統計に用いる標準地域コード)")
     build_municipality_code("data/municipality_code")
 
     pipeline = create_pipeline()
     app_id = os.environ["ESTAT_API_KEY"]
 
-    # 4. 統計表カタログ (全件取得)
-    logger.info("4/8: stats_list (統計表カタログ)")
+    # 5. 統計表カタログ (全件取得)
+    logger.info("5/9: stats_list (統計表カタログ)")
     info = pipeline.run(stats_list_resource(app_id))
     logger.info(f"  {info}")
 
-    # 5. メタ情報 (直近3日間に更新された統計表のみ)
-    logger.info("5/8: meta_info (メタ情報)")
+    # 6. メタ情報 (直近3日間に更新された統計表のみ)
+    logger.info("6/9: meta_info (メタ情報)")
     updated_ids = fetch_updated_ids(app_id, days=3)
     if updated_ids:
         info = pipeline.run(meta_info_resource(app_id, updated_ids))
@@ -82,13 +88,13 @@ def main():
     else:
         logger.info("  skip (no updates)")
 
-    # 6. 社会・人口統計体系(SSDS) データ
-    logger.info("6/8: ssds (社会・人口統計体系)")
+    # 7. 社会・人口統計体系(SSDS) データ
+    logger.info("7/9: ssds (社会・人口統計体系)")
     info = pipeline.run(create_source(app_id, tables_config))
     logger.info(f"  {info}")
 
-    # 7. 国勢調査 小地域(町丁・字等)統計データ
-    logger.info("7/8: census_small_area (小地域統計)")
+    # 8. 国勢調査 小地域(町丁・字等)統計データ
+    logger.info("8/9: census_small_area (小地域統計)")
     for spec in SMALL_AREA_TABLES:
         ids = fetch_small_area_ids(app_id, spec["title_prefix"])
         if ids:
@@ -101,8 +107,8 @@ def main():
         else:
             logger.info(f"  skip {spec['name']} (no tables)")
 
-    # 8. dbt ビルド
-    logger.info("8/8: dbt build")
+    # 9. dbt ビルド
+    logger.info("9/9: dbt build")
     dbt_build()
 
 
