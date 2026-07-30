@@ -1,124 +1,145 @@
-"""地域メッシュ統計（1kmメッシュ）の統計値ダウンロード。
+"""地域メッシュ統計 (1kmメッシュ) の取得 (searchKind=2 + getStatsData)。
 
-e-Stat 統計GIS から都道府県別の CSV をダウンロードし、UTF-8 に変換して展開する。
-境界データと違い API キーは不要で、statsId と都道府県コードだけで取得できる。
+メッシュ統計は小地域統計と同じく getStatsList のデフォルト(searchKind=1)では
+返らない。searchKind=2 を指定して 1次メッシュごとの statsDataId を実行時に集め、
+各 ID を getStatsData で取得する。estat_table は 1 ID = 1 リソースのため、
+apply_hints で出力先テーブル名を揃えて 1 テーブルへ merge する。
 
-配布 CSV には次の 2 つの癖があるため、ここで正規化してから dbt に渡す。
+■ 政府統計コードについて
 
-1. 文字コードが CP932。DuckDB の read_csv は CP932 を読めないので UTF-8 に変換する。
-2. ヘッダーが 2 行ある。1 行目が列コード (KEY_CODE, T001179001, ...)、2 行目が
-   日本語ラベル、3 行目以降がデータ。2 行目を捨てて通常の 1 行ヘッダーにする。
+地域メッシュ統計には独立した政府統計コード 00200511 があるが、**API では 0 件**で
+検索できない (searchKind 1/2 とも「該当データなし」)。メッシュ統計の統計表は
+国勢調査 (00200521) と経済センサス‐活動調査 (00200553) の配下に登録されている。
 
-データソース: 令和2年国勢調査・令和3年経済センサス‐活動調査に関する地域メッシュ統計
-https://www.e-stat.go.jp/gis
+■ 対象表の選び方
+
+STATISTICS_NAME に調査年・集計単位・測地系が入る (例: "令和２年国勢調査
+世界測地系(1KMメッシュ)")。TITLE_SPEC.TABLE_NAME が表の内容、
+TITLE_SPEC.TABLE_SUB_CATEGORY2 が配布単位である 1次メッシュのコード。
+統計表 ID をハードコードせず、この 2 つで引く。
+
+■ API に無い表
+
+令和2年国勢調査のメッシュ統計は API には「人口及び世帯」しか登録されていない。
+労働力状態・従業地通学地 (平成27年には「その２ 人口移動集計及び就業状態等基本集計に
+関する事項」「その３ 従業地・通学地集計及び世帯構造等基本集計に関する事項」として
+ある) は統計GIS では公開済みだが API 未登録。経済センサスのメッシュも平成24年・
+平成28年までで令和3年は未登録。API への登録は表単位で順次進んでいるため
+(令和2年小地域も 2022-07-15 に6種類、2022-09-30 に3種類と段階的に追加された)、
+これらも将来追加される見込み。追加されたらここに足す。
 """
 
 import logging
-import zipfile
-from pathlib import Path
-from urllib.request import Request
+from typing import List, Optional
 
-from pipelines.gis_download import download_with_retry
+from estat_api_dlt_helper import estat_source, estat_table
 
-logger = logging.getLogger("pipelines")
+from pipelines import EstatStatus
+from pipelines.ssds import drop_stat_inf
 
-BASE_URL = (
-    "https://www.e-stat.go.jp/gis/statmap-search/data"
-    "?statsId={stats_id}"
-    "&code={code}"
-    "&downloadType=2"
-)
+# TABLE_INF の COLLECT_AREA 欠落に対応する互換パッチ。import した時点で当たる。
+from pipelines import estat_compat  # noqa: F401
+from estat_api_dlt_helper.api.client import EstatApiClient
 
-# 配布単位である都道府県コード。
-PREFECTURE_CODES = [f"{i:02d}" for i in range(1, 48)]
+logger = logging.getLogger(__name__)
 
-# 取り込む統計表。集計単位サフィックス S は基準地域メッシュ（1kmメッシュ）。
+# 取り込むメッシュ統計表。
 #
-# 同じ内容の表が調査年・測地系ごとに別 statsId で並んでいるため、都道府県合計を
-# 公表値と突合して次のとおり同定した（東京都 = code 13 で実測）。
-#   - T001171/T001179/T001181: 令和2年国勢調査。人口総数 14,047,594、
-#     労働力人口 6,187,583 が公表値と一致する。
-#     平成27年の同型表は T001176/T001200/T001202（13,515,271 / 6,094,436）。
-#     令和2年の別測地系は T001188/T001189/T001191。
-#   - T001157: 令和3年経済センサス‐活動調査。編成項目に「Ａ～Ｓ全産業」と
-#     「Ｆ～Ｓ第３次産業」があるのが令和3年の特徴で、平成28年（T001209）は
-#     「Ａ～Ｒ全産業（Ｓ公務を除く）」「Ｆ～Ｒ第３次産業」しか持たない。
-#     https://www.stat.go.jp/data/mesh/pdf/r3keisen.pdf
-#
-# 測地系は JGD2000 系を選んでいる。既存の boundary.mesh_1km が EPSG:4612 = JGD2000
-# であることに合わせたもの。JGD2000 と JGD2011 のメッシュ区画のずれは国内で
-# 数十cm〜数m のため、どちらでもメッシュコードでの結合結果は変わらない。
+# primary_key は表ごとに違う。国勢調査メッシュは cat02 に秘匿・合算区分を持つが、
+# 経済センサスメッシュは cat01 と area だけで cat02 が無い。
 MESH_STATS_TABLES = [
     {
         "name": "mesh_population",
-        "stats_id": "T001171",
-        "description": "令和2年国勢調査 年齢（5歳階級）別、男女別人口",
-    },
-    {
-        "name": "mesh_labor",
-        "stats_id": "T001179",
-        "description": "令和2年国勢調査 労働力状態別人口、産業別就業者数",
-    },
-    {
-        "name": "mesh_commute",
-        "stats_id": "T001181",
-        "description": "令和2年国勢調査 従業地・通学地別人口、在学者数、未就学者数",
+        "stats_code": "00200521",
+        "statistics_name": "令和２年国勢調査 世界測地系(1KMメッシュ)",
+        "table_name": "人口及び世帯",
+        "primary_key": ["cat01", "cat02", "area"],
     },
     {
         "name": "mesh_establishment",
-        "stats_id": "T001157",
-        "description": "令和3年経済センサス‐活動調査 産業別事業所数、従業者数",
+        "stats_code": "00200553",
+        "statistics_name": "平成２８年経済センサス活動調査 世界測地系(1KMメッシュ)",
+        "table_name": "産業（大分類）別事業所数及び従業者数",
+        "primary_key": ["cat01", "area"],
     },
 ]
 
 
-def csv_name(stats_id: str, code: str) -> str:
-    """変換後の CSV ファイル名。dbt の raw モデルが glob で読む。"""
-    return f"{stats_id}_{code}.csv"
+def _text(value) -> str:
+    """API レスポンスの文字列フィールド ({"$": ...} 形式もある) を取り出す。"""
+    if isinstance(value, dict):
+        return str(value.get("$", ""))
+    return "" if value is None else str(value)
 
 
-def _normalize(zip_path: Path, csv_path: Path) -> None:
-    """zip 内の CP932 / 2行ヘッダーの CSV を UTF-8 / 1行ヘッダーに変換する。"""
-    with zipfile.ZipFile(zip_path) as zf:
-        members = [n for n in zf.namelist() if n.lower().endswith(".txt")]
-        if len(members) != 1:
-            raise ValueError(f"expected exactly one .txt in {zip_path.name}: {members}")
-        raw = zf.read(members[0]).decode("cp932")
+def fetch_mesh_ids(
+    app_id: str, stats_code: str, statistics_name: str, table_name: str
+) -> List[str]:
+    """指定した統計・集計単位・表名のメッシュ統計表 ID を集める。
 
-    lines = raw.replace("\r\n", "\n").split("\n")
-    if len(lines) < 2:
-        raise ValueError(f"{zip_path.name} has no data rows")
+    Args:
+        app_id: e-Stat API アプリケーション ID。
+        stats_code: 政府統計コード (国勢調査 00200521 / 経済センサス 00200553)。
+        statistics_name: STATISTICS_NAME の完全一致値。調査年・集計単位・測地系が
+            ここに入る。例: "令和２年国勢調査 世界測地系(1KMメッシュ)"
+        table_name: TITLE_SPEC.TABLE_NAME の完全一致値。例: "人口及び世帯"
 
-    # 2 行目（日本語ラベル行）を捨てる。ラベルは列コードから引けるので不要。
-    csv_path.write_text("\n".join([lines[0]] + lines[2:]), encoding="utf-8")
-
-
-def download_mesh_stats(dest_dir: str) -> None:
-    """全統計表 × 全都道府県のメッシュ統計 CSV をダウンロードし変換する。
-
-    既に変換済みの CSV はスキップする。
+    Returns:
+        条件に合致する statsDataId のリスト(配布単位である 1次メッシュの数だけ返る)。
     """
-    dest = Path(dest_dir)
-    dest.mkdir(parents=True, exist_ok=True)
+    client = EstatApiClient(app_id=app_id, timeout=300)
+    # searchKind=2 の 00200521 は約5,300表returned。既定の limit に頼らず明示する。
+    result = client.get_stats_list(
+        statsCode=stats_code, searchKind=2, limit=100000
+    )
 
-    for spec in MESH_STATS_TABLES:
-        stats_id = spec["stats_id"]
-        downloaded = 0
+    stats_list = result.get("GET_STATS_LIST", {})
+    status = stats_list.get("RESULT", {}).get("STATUS")
+    if status not in (EstatStatus.OK, EstatStatus.PARTIAL):
+        error_msg = stats_list.get("RESULT", {}).get("ERROR_MSG", "Unknown error")
+        raise RuntimeError(f"mesh_stats: API error (status {status}): {error_msg}")
 
-        for code in PREFECTURE_CODES:
-            csv_path = dest / csv_name(stats_id, code)
+    tables = stats_list.get("DATALIST_INF", {}).get("TABLE_INF", [])
+    if isinstance(tables, dict):
+        tables = [tables]
 
-            if csv_path.exists():
-                continue
+    ids: List[str] = []
+    for t in tables:
+        if _text(t.get("STATISTICS_NAME")) != statistics_name:
+            continue
+        spec = t.get("TITLE_SPEC") or {}
+        if _text(spec.get("TABLE_NAME")) != table_name:
+            continue
+        ids.append(t["@id"])
 
-            url = BASE_URL.format(stats_id=stats_id, code=code)
-            zip_path = dest / f"{stats_id}_{code}.zip"
-            download_with_retry(Request(url), zip_path)
-            _normalize(zip_path, csv_path)
-            zip_path.unlink()
-            downloaded += 1
+    logger.info(f"mesh_stats: {len(ids)} tables for '{statistics_name}' / '{table_name}'")
+    return ids
 
-        logger.info(
-            f"  {spec['name']} ({stats_id}): {downloaded} downloaded, "
-            f"{len(PREFECTURE_CODES) - downloaded} cached"
+
+def create_mesh_source(
+    app_id: str,
+    stats_data_ids: List[str],
+    table_name: str,
+    primary_key: List[str],
+    maximum_offset: Optional[int] = None,
+):
+    """複数の1次メッシュの統計表を 1 テーブルへ集約するソースを作成する。
+
+    stat_inf は小地域統計と同様に除去する。含んだままだと行ごとに複製される
+    メタデータ struct のせいで merge SQL が GitHub ランナーの DuckDB
+    memory_limit を超えて OOM になる。
+    """
+    resources = []
+    for sid in stats_data_ids:
+        resource = estat_table(
+            stats_data_id=sid,
+            app_id=app_id,
+            table_name=f"_mesh_{sid}",
+            write_disposition="merge",
+            primary_key=primary_key,
+            maximum_offset=maximum_offset,
         )
+        resource.add_map(drop_stat_inf)
+        resource.apply_hints(table_name=table_name)
+        resources.append(resource)
+    return estat_source(tables=resources, app_id=app_id)
