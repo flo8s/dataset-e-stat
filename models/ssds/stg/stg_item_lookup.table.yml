@@ -14,3 +14,7 @@ fields:
   - name: unit
     title: 単位
     description: 当該項目の単位。同じ item_code で unit が食い違う例は無い
+  - name: level
+    description: item_code の階層の深さ。1 が最上位。コードの前方一致から導いた値で、item_catalog の level 列（常に 1）とは別物
+  - name: parent_code
+    description: 1つ上の項目のコード。最上位は NULL。自分より短く、かつ自分の先頭に一致するコードのうち最長のものを親としている
