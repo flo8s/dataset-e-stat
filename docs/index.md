@@ -20,20 +20,24 @@ e-Stat（政府統計の総合窓口）の API と統計GIS から取得した�
 | boundary | 令和2年国勢調査 町丁・字等別境界 small_area、1kmメッシュ境界 mesh_1km |
 | code | 統計に用いる標準地域コード municipality と、その変更（廃置分合）履歴 municipality_change |
 
-11分野（A〜K）の詳細は各カテゴリのガイドを参照してください。
+11分野（A〜K）の詳細は各カテゴリのガイドを参照してください。市区町村より細かい粒度で見たいときは[小地域集計](/cookbook/e_stat/census)、地図に載せるときは[境界データ](/cookbook/e_stat/boundary)を参照してください。
 
 ## SSDS 共通のカラム構成
 
-ssds スキーマの22テーブルはすべて同じ8カラムです。指標を `cat01`（分類事項コード）で絞り込み、`area_name`（地域）と `year`（年）で必要な行を取り出すのが基本です。
+ssds スキーマの22テーブルはすべて同じ10カラムです。指標を `cat01`（分類事項コード）で絞り込み、`area_name`（地域）と `year`（年）で必要な行を取り出すのが基本です。
 
 - cat01: 分類事項コード（指標を一意に識別する。例: `A1101` = 総人口）
 - item_name: 分類事項名（例: `A1101_総人口`）
+- cat01_level: 分類事項の階層レベル（1 が最上位）
+- cat01_parent: 1つ上の分類事項コード（最上位は NULL）
 - area: 地域コード（全国は `00000`、都道府県は `13000` のような5桁）
 - area_name: 地域名（`全国` / `東京都` など）
 - time_name: 時間軸名（例: `2020年度`）
 - year: 年
 - unit: 単位（例: `人`）
 - value: 統計値
+
+`unit` は指標ごとに違います（`人` / `世帯` / `千円` / `％` など）。`cat01` を絞らずに `value` を合計しても意味を持ちません。
 
 ## 行の粒度
 
@@ -52,6 +56,48 @@ GROUP BY year
 ORDER BY year
 ```
 
+市区町村テーブルは政令指定都市の合計行（`01100` 札幌市）と行政区（`01101` 中央区）が同居します。市区町村単位で数えるときは `code.municipality` の `is_municipality` で絞ります。
+
+```sql
+-- 政令市を1団体として数え、行政区は数えない
+SELECT m.pref_name, COUNT(*) AS municipalities
+FROM e_stat.ssds.a_municipal_population p
+JOIN e_stat.code.municipality m ON p.area = m.area_code
+WHERE p.cat01 = 'A1101' AND p.year = 2020 AND m.is_municipality
+GROUP BY m.pref_name
+ORDER BY municipalities DESC
+LIMIT 5
+```
+
+## 指標の階層に注意する
+
+`cat01` には上位項目とその内訳が同じ列に並んでいます。`J1102`（生活保護被保護実世帯数）と `J110203`（うち高齢者世帯）が同じ列に入るので、`LIKE 'J1102%'` で絞ると両方返ってきます。
+
+`cat01_parent` で切り分けられます。
+
+```sql
+-- 最上位の指標だけ
+SELECT DISTINCT cat01, item_name
+FROM e_stat.ssds.j_pref_welfare
+WHERE cat01_parent IS NULL
+
+-- J1102 の内訳だけ
+SELECT DISTINCT cat01, item_name
+FROM e_stat.ssds.j_pref_welfare
+WHERE cat01_parent = 'J1102'
+```
+
+ただし内訳が親を分割しているとは限りません。分野によって性質が違います。
+
+| 系統 | 親 | 内訳の合計 | 内訳の性質 |
+|------|---:|----------:|-----------|
+| A1101 総人口 | 14,047,594 | 14,047,594 | 男女で分割されている |
+| J1102 生活保護被保護実世帯数 | 230,706 | 200,729 | 「うち母子世帯」などの部分集合 |
+
+（東京都・2020年度）
+
+内訳を合計して親の代わりにするのは、その系統が分割になっていることを確かめてからにしてください。親の値がある指標は、親をそのまま使うのが安全です。
+
 ## 指標を探す: item_catalog
 
 どの `cat01` を使えばよいかは `item_catalog` を `item_name` で検索して調べます。`item_code` がそのまま各カテゴリテーブルの `cat01` になります。`#` で始まる item_code は算出指標の定義で、各カテゴリテーブルには収録されていないため除外します。
@@ -67,30 +113,30 @@ LIMIT 20
 
 ## 基本パターン1: 全国の時系列
 
-`area_name = '全国'` で絞り、`year` ごとに `MAX(value)` を取ります。
+`area_name = '全国'` で絞るだけです。`cat01` × `area` × `year` で1行なので、集約は要りません。
 
 ```sql
-SELECT year, MAX(value) AS population
+SELECT year, value AS population
 FROM e_stat.ssds.a_pref_population
 WHERE cat01 = 'A1101' AND area_name = '全国'
-GROUP BY year
 ORDER BY year
 ```
 
 ## 基本パターン2: 都道府県ランキング（最新年）
 
-最新年をサブクエリで求め、`全国` を除いて並べます。この「最新年 + MAX(value)」の形はどのカテゴリでも使えます。
+最新年をサブクエリで求め、`全国` を除いて並べます。この形はどのカテゴリでも使えます。
 
 ```sql
-SELECT area_name, MAX(value) AS population
+SELECT area_name, value AS population
 FROM e_stat.ssds.a_pref_population
 WHERE cat01 = 'A1101'
   AND area_name <> '全国'
   AND year = (SELECT MAX(year) FROM e_stat.ssds.a_pref_population WHERE cat01 = 'A1101')
-GROUP BY area_name
 ORDER BY population DESC
 LIMIT 10
 ```
+
+指標によって収録の終わる年が違うため、最新年は `cat01` ごとに求めます。テーブル全体の `MAX(year)` を使うと、その年に値のない指標が空になります。
 
 市区町村単位で見たい場合は `a_municipal_population` 以下の `*_municipal_*` テーブルを使います。`area_name` は `茨城県 つくば市` のように県名と市区町村名が入ります。
 
