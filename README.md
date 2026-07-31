@@ -76,12 +76,17 @@ area には市区町村・町丁・字等・その内訳の3階層が含まれ�
 
 `municipality` と `small_area` はどちらも全域を覆い、合計は一致します。
 `small_area_detail` は丁目に分かれている地域にしかないため全域を覆いません。
-地図に載せるときは境界データ側に 5桁の行が無いので、`small_area` 以下で絞ります。
 
 ```sql
 -- 町丁・字等の粒度だけ（全域を覆い、重複しない）
 SELECT * FROM e_stat.census.census_small_area_age WHERE area_level = 'small_area';
 ```
+
+境界データと結合するときは `area_level` で絞らないでください。`boundary.small_area`
+は末端の区画だけを1行ずつ持つ（丁目に分かれている地域は 11桁の行しか無い）ため、
+`small_area` に絞ってから結合すると全国で 4,530万人分（36%）しか残りません。
+`area = key_code` でそのまま結合すれば、末端の区画が自然に選ばれて 1億2603万人に
+なります。
 
 4表とも cat02 は秘匿・合算区分です。census_small_area_age だけ名称列が sex という
 名前ですが、中身は他の3表の secrecy と同じ秘匿・合算区分で、男女は cat01 側
