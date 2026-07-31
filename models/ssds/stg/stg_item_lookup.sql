@@ -1,7 +1,7 @@
 {{ config(materialized='table') }}
 
 {#
-  mart のビューが item_name / unit / 階層を引くための、item_code で一意な参照表。
+  mart のビューが item_name / unit / 上位項目を引くための、item_code で一意な参照表。
 
   item_catalog は「どの統計表にその項目が載っているか」を表すため、同じ item_code が
   掲載統計表の数だけ（最大3行）存在する。mart のビューがこれを直接 LEFT JOIN していた
@@ -11,44 +11,27 @@
   item_code ごとに unit が食い違う例は無く、item_name が食い違うのは 5,377 件中 8 件
   （全角/半角括弧などの表記ゆれ）のみ。stats_data_id の小さい統計表の表記を採る。
 
-  階層は item_catalog の level / parent_code が使えない（level は全て 1、parent_code
-  は全て空）ため、コードの前方一致から組み立てる。A1101 の下に A110101 が来る形。
-  ここで出す親子はあくまでコードの前方一致であって、内訳が親を分割している保証は無い。
-  A 人口・世帯では内訳（男/女）の合計が親に一致するが、J 福祉・社会保障の J1102 の
-  ように「うち」項目だけが並んでいて親に届かない系統もある。
+  上位項目は桁位置で決まる。総務省の定義では項目符号は
+  分野1文字 + 大分類1桁 + 小分類1桁 + 項目2桁 = 5桁 で、その下に副区分が付く。
+  https://www.stat.go.jp/data/ssds/2.html
+
+      A1101      総人口          （項目 = 5桁）
+      A110101    総人口（男）    （副区分。親は先頭5桁）
+
+  副区分は1階層しかないので、5桁を超えるコードの親は必ず先頭5桁になる。
+  item_catalog の level / parent_code は使えない（level は全て 1、parent_code は
+  全て空）ため、ここで導出する。
+
+  親はデータを持たないことがある。定義に「大分類、小分類等の分類項目名（データは
+  ない）も併せて記載しています」とあるとおりで、A1601（未婚人口）のように副区分
+  だけが公開されている系統が 621 件ある。parent_code が item_code として存在
+  しないのは異常ではない。
 #}
 
-WITH codes AS (
-    SELECT DISTINCT item_code FROM {{ ref('item_catalog') }}
-),
-
--- 自分より短く、かつ自分の先頭に一致するコードが祖先。最長のものが親。
-ancestry AS (
-    SELECT
-        c.item_code,
-        COUNT(*) AS ancestor_count,
-        MAX(LENGTH(a.item_code)) AS parent_length
-    FROM codes c
-    JOIN codes a
-        ON LENGTH(a.item_code) < LENGTH(c.item_code)
-        AND STARTS_WITH(c.item_code, a.item_code)
-    GROUP BY c.item_code
-),
-
-names AS (
-    SELECT
-        item_code,
-        MIN_BY(item_name, stats_data_id) AS item_name,
-        MIN_BY(unit, stats_data_id) AS unit
-    FROM {{ ref('item_catalog') }}
-    GROUP BY item_code
-)
-
 SELECT
-    n.item_code,
-    n.item_name,
-    n.unit,
-    (COALESCE(a.ancestor_count, 0) + 1)::INTEGER AS level,
-    SUBSTR(n.item_code, 1, a.parent_length) AS parent_code
-FROM names n
-LEFT JOIN ancestry a ON n.item_code = a.item_code
+    item_code,
+    MIN_BY(item_name, stats_data_id) AS item_name,
+    MIN_BY(unit, stats_data_id) AS unit,
+    CASE WHEN LENGTH(item_code) > 5 THEN SUBSTR(item_code, 1, 5) END AS parent_code
+FROM {{ ref('item_catalog') }}
+GROUP BY item_code
