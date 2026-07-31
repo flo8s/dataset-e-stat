@@ -25,22 +25,27 @@ models:
         title: "町丁・字等別境界"
     columns:
       - name: key_code
-        description: "図形と集計データのリンクコード（PREF + KEYCODE2）"
+        description: "図形と集計データのリンクコード（PREF + KEYCODE2）。町丁・字等が9桁、その内訳区画が11桁で、census スキーマ各表の area と同一体系。key_code = area で集計値と結合する（census 側にある5桁の市区町村行には対応する境界が無い）"
         meta:
           title: KEY_CODE
       - name: prefecture_code
+        description: "都道府県コード（2桁）。key_code の先頭2桁と同じ"
         meta:
           title: 都道府県番号
       - name: prefecture_name
+        description: "都道府県名"
         meta:
           title: 都道府県名
       - name: city_code
+        description: "市区町村番号（3桁）。単独では一意にならず、prefecture_code と連結した5桁が標準地域コードになる（01 + 101 = 01101 札幌市中央区）"
         meta:
           title: 市区町村番号
       - name: city_name
+        description: "市区町村名。政令指定都市は行政区名まで含む"
         meta:
           title: 市区町村名
       - name: area_name
+        description: "町丁・字等の名称。市区町村名は含まない"
         meta:
           title: 町丁・字等名称
       - name: kigo_e
