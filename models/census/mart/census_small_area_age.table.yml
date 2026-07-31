@@ -1,6 +1,6 @@
 schema: census
 name: census_small_area_age
-title: 小地域別 年齢・男女別人口（令和2年国勢調査）
+title: 小地域別 男女・年齢別人口（令和2年国勢調査）
 description: '令和2年国勢調査 小地域(町丁・字等)別 年齢(5歳階級・4区分)別、男女別人口。
 
   area は同データセットの境界データ small_area の key_code と同一体系で、
@@ -9,7 +9,9 @@ description: '令和2年国勢調査 小地域(町丁・字等)別 年齢(5歳�
 
   area には市区町村(5桁)と小地域(9桁/11桁)の各階層が含まれる。
 
-  分類は cat01=年齢区分、cat02=男女区分。
+  分類は cat01=男女・年齢区分（総数／男／女 × 5歳階級・4区分）、
+
+  cat02=秘匿・合算区分(無し/合算/秘匿)。男女は cat01 側に入っている。
 
   出典: 総務省統計局 令和2年国勢調査 小地域集計（統計GIS）。
 
@@ -30,13 +32,13 @@ fields:
   - name: area_name
     title: 町丁・字等名称
   - name: cat01
-    title: 年齢区分コード
+    title: 男女・年齢区分コード
   - name: age_class
-    title: 年齢区分名（5歳階級・4区分）
+    title: 男女・年齢区分名（5歳階級・4区分）
   - name: cat02
-    title: 男女区分コード
+    title: 秘匿・合算区分コード
   - name: sex
-    title: 男女区分名
+    title: 秘匿・合算区分名（無し/合算/秘匿）
   - name: unit
     title: 単位
   - name: value
