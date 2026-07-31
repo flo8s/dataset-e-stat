@@ -1,6 +1,7 @@
 SELECT
     area,
     area_name,
+    {{ e_stat_area_level('area') }} AS area_level,
     cat01,
     family_type,
     cat02,

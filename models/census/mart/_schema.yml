@@ -27,6 +27,10 @@ models:
         description: "地域の名称。5桁の行は市区町村名（札幌市中央区）、9桁/11桁の行は市区町村名に町丁・字等名を続けた表記（札幌市中央区円山）"
         meta:
           title: 町丁・字等名称
+      - name: area_level
+        description: "area の粒度。municipality=市区町村（5桁）、small_area=町丁・字等（9桁）、small_area_detail=丁目など町丁・字等の内訳（11桁）。municipality と small_area はどちらも全域を覆い、総人口の合計はどちらも 126,146,099 で一致する。small_area_detail は丁目に分かれている地域にしか無く全域を覆わない（総人口で 80,726,789、64%）ので、この粒度だけで合計すると足りない"
+        meta:
+          title: 地域の粒度（municipality/small_area/small_area_detail）
       - name: cat01
         description: "男女・年齢区分のコード（4桁）。0010〜0200 が総数、0210〜0400 が男、0410〜0600 が女で、男女の別もこの列に入っている。各区分の中に「総数、年齢「不詳」含む」と5歳階級と4区分（15歳未満・15〜64歳・65歳以上・75歳以上）が同居するため、cat01 を絞らずに value を合計すると何重にも重複する"
         meta:
@@ -78,6 +82,10 @@ models:
         description: "地域の名称。5桁の行は市区町村名（札幌市中央区）、9桁/11桁の行は市区町村名に町丁・字等名を続けた表記（札幌市中央区円山）"
         meta:
           title: 町丁・字等名称
+      - name: area_level
+        description: "area の粒度。municipality=市区町村（5桁）、small_area=町丁・字等（9桁）、small_area_detail=丁目など町丁・字等の内訳（11桁）。municipality と small_area はどちらも全域を覆い、総人口の合計はどちらも 126,146,099 で一致する。small_area_detail は丁目に分かれている地域にしか無く全域を覆わない（総人口で 80,726,789、64%）ので、この粒度だけで合計すると足りない"
+        meta:
+          title: 地域の粒度（municipality/small_area/small_area_detail）
       - name: cat01
         description: "世帯の家族類型コード（4桁）。0010=一般世帯総数、0020=親族世帯、0030=核家族世帯、0040/0050=そのうち夫婦のみ／夫婦と子供、0060=核家族以外。総数と内訳が同じ列に混在するため、cat01 を絞らずに value を合計すると二重計上になる"
         meta:
@@ -129,6 +137,10 @@ models:
         description: "地域の名称。5桁の行は市区町村名（札幌市中央区）、9桁/11桁の行は市区町村名に町丁・字等名を続けた表記（札幌市中央区円山）"
         meta:
           title: 町丁・字等名称
+      - name: area_level
+        description: "area の粒度。municipality=市区町村（5桁）、small_area=町丁・字等（9桁）、small_area_detail=丁目など町丁・字等の内訳（11桁）。municipality と small_area はどちらも全域を覆い、総人口の合計はどちらも 126,146,099 で一致する。small_area_detail は丁目に分かれている地域にしか無く全域を覆わない（総人口で 80,726,789、64%）ので、この粒度だけで合計すると足りない"
+        meta:
+          title: 地域の粒度（municipality/small_area/small_area_detail）
       - name: cat01
         description: "産業大分類のコード（4桁）。0010=総数、0020 以降が日本標準産業分類の大分類（Ａ農業、林業／Ｂ漁業…）。総数と「うち農業」のような内訳が同じ列に混在するため、cat01 を絞らずに value を合計すると二重計上になる"
         meta:
@@ -180,6 +192,10 @@ models:
         description: "地域の名称。5桁の行は市区町村名（札幌市中央区）、9桁/11桁の行は市区町村名に町丁・字等名を続けた表記（札幌市中央区円山）"
         meta:
           title: 町丁・字等名称
+      - name: area_level
+        description: "area の粒度。municipality=市区町村（5桁）、small_area=町丁・字等（9桁）、small_area_detail=丁目など町丁・字等の内訳（11桁）。municipality と small_area はどちらも全域を覆い、総人口の合計はどちらも 126,146,099 で一致する。small_area_detail は丁目に分かれている地域にしか無く全域を覆わない（総人口で 80,726,789、64%）ので、この粒度だけで合計すると足りない"
+        meta:
+          title: 地域の粒度（municipality/small_area/small_area_detail）
       - name: cat01
         description: "住宅の種類・所有の関係コード（4桁）。0010=住宅に住む一般世帯（総数）、0020=持ち家、0030=民営借家 以降が内訳。総数と内訳が同じ列に混在するため、cat01 を絞らずに value を合計すると二重計上になる"
         meta:

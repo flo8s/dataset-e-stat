@@ -55,8 +55,8 @@ SELECT * FROM e_stat.ssds.j_pref_welfare WHERE cat01_parent = 'J1102';
 
 令和2年国勢調査の町丁・字等別（小地域）集計です。area は同データセットの境界データ
 small_area の key_code と同一体系で、`key_code = area` で境界ポリゴンと結合できます。
-area には市区町村（5桁）・町丁・字等（9桁）・その内訳区画（11桁）の3階層が含まれ、
-5桁は9桁の合計、9桁は11桁の合計にあたります。桁数を揃えずに合計すると重複します。
+area には市区町村・町丁・字等・その内訳の3階層が含まれ、粒度は `area_level` で判別
+できます。桁数を揃えずに合計すると重複します。
 分類は cat01（主分類）、cat02（秘匿・合算区分: 無し/合算/秘匿）です。
 
 | テーブル | 内容 | cat01 | value |
@@ -65,6 +65,23 @@ area には市区町村（5桁）・町丁・字等（9桁）・その内訳区�
 | census_small_area_household | 世帯の家族類型別一般世帯数 | 家族類型 | 一般世帯数 |
 | census_small_area_industry | 産業（大分類）別就業者数 | 産業大分類 | 就業者数 |
 | census_small_area_housing | 住宅の所有の関係別一般世帯数 | 住宅の種類・所有の関係 | 一般世帯数 |
+
+### 地域の粒度
+
+| area_level | 桁数 | 内容 | 総人口の合計 |
+|-----------|-----:|------|------------:|
+| municipality | 5 | 市区町村 | 126,146,099 |
+| small_area | 9 | 町丁・字等 | 126,146,099 |
+| small_area_detail | 11 | 丁目など町丁・字等の内訳 | 80,726,789 |
+
+`municipality` と `small_area` はどちらも全域を覆い、合計は一致します。
+`small_area_detail` は丁目に分かれている地域にしかないため全域を覆いません。
+地図に載せるときは境界データ側に 5桁の行が無いので、`small_area` 以下で絞ります。
+
+```sql
+-- 町丁・字等の粒度だけ（全域を覆い、重複しない）
+SELECT * FROM e_stat.census.census_small_area_age WHERE area_level = 'small_area';
+```
 
 4表とも cat02 は秘匿・合算区分です。census_small_area_age だけ名称列が sex という
 名前ですが、中身は他の3表の secrecy と同じ秘匿・合算区分で、男女は cat01 側
