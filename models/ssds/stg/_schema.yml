@@ -37,3 +37,5 @@ models:
         description: "分類項目名。同じ item_code で表記が食い違う場合（5,377 件中 8 件、全角/半角括弧などの揺れ）は stats_data_id の小さい統計表の表記を採る"
       - name: unit
         description: "当該項目の単位。同じ item_code で unit が食い違う例は無い"
+      - name: parent_code
+        description: "上位項目の符号。5桁の項目は NULL。項目符号は5桁 + 副区分で、副区分は1階層だけなので、5桁を超えるコードの親は先頭5桁になる。item_catalog の parent_code 列（常に空）とは別物"
