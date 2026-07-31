@@ -2,11 +2,22 @@ spec_version: "0.1"
 name: e_stat
 title: e-Stat 統計データ
 description: |-
-  e-Stat API から直接取得した日本の公的統計データ。
+  e-Stat API と統計GIS から取得した日本の公的統計データ。地域別の統計を横断で引くための土台で、
+  スキーマごとに出どころと粒度が違う。
+  census の area は boundary.small_area の key_code と同じ体系なので、小地域の統計を地図に
+  載せるときはそこで結合する。
+  code.municipality の5桁コードは全国地方公共団体コード（6桁）とは別体系なので、lg_code や
+  address_br と結合するときは桁と体系を揃える。
   このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。
 keywords:
   - 統計
+  - 政府統計
   - e-Stat
+  - 社会・人口統計体系
+  - SSDS
+  - 国勢調査
+  - 小地域
+  - 消費者物価指数
   - 人口
   - 社会
 homepage: https://github.com/queria-io/dataset-e-stat
@@ -32,32 +43,6 @@ temporal_coverage: { start: "1970", end: null }
 spatial_coverage: [JP]
 update_frequency: daily
 cover: 📊
-
-ai_context:
-  instructions: |
-    地域別の統計を横断で引くための土台。スキーマごとに出どころと粒度が違う。
-    ssds（社会・人口統計体系）は都道府県別と市区町村別の11カテゴリ（A 人口・世帯 〜 K 安全）で、
-    1行が「地域 × 指標 × 時間軸」。値は value 1列に縦持ちなので、指標は cat01 / item_name で
-    絞る。単位は指標ごとに違う（unit 列）ので、絞らずに合計すると意味の無い数になる。
-    収録は1980年度〜2024年度あたりで、指標によって始まりも終わりも違う。
-    census は令和2年国勢調査の小地域集計で、area が boundary.small_area の key_code と
-    同じ体系。地図に載せるときはそこで結合する。
-    boundary.small_area は境界ポリゴンで、水面調査区を除外し、同一 KEY_CODE の重複は
-    代表（KIGO_E=E1）のみ残している。飛び地の分割ポリゴンは入っていない。
-    boundary.mesh_1km は標準地域メッシュ（3次メッシュ＝1kmメッシュ）の区画で、統計値は持たない。
-    メッシュ単位の統計を地図化するときの器として使う。8桁のメッシュコードが結合キー。
-    cpi は消費者物価指数（1970年〜）。指数なので水準ではなく変化率で見る。
-    code.municipality は5桁の標準地域コード。全国地方公共団体コード（6桁）とは別体系なので、
-    lg_code / address_br と結合するときは桁と体系を揃える。
-    code.municipality_change は廃置分合の履歴で、合併をまたいで時系列をつなぐのに使う。
-    ただし収録は2007年4月2日以降で、平成の大合併のピーク（1999〜2006年）は含まない。
-    秘匿・合算区分（census の cat02）があり、小さい地域では値が秘匿されている。
-    「0」ではなく「公表されていない」なので、合計すると実態より小さくなる。
-  synonyms: [e-Stat, 政府統計, 社会・人口統計体系, SSDS, 国勢調査, 小地域, 消費者物価指数]
-  examples:
-    - 市区町村別の人口の推移を出したい
-    - 小地域の年齢構成を地図に出したい
-    - 消費者物価指数の推移を品目別に見たい
 
 schemas:
   - name: main
