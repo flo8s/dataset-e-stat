@@ -221,3 +221,61 @@ models:
         meta:
           title: 一般世帯数
 
+
+  - name: daytime_population_mesh_1km
+    description: |
+      1kmメッシュ別の昼間人口・夜間人口・昼夜間人口比率（推計値）。
+      昼間人口は市区町村より細かい単位では公表されていないため、市区町村の公表値を
+      メッシュへ按分して推計している。公表値の内訳（社会・人口統計体系 A6101〜A6106、
+      令和2年）を「その場に残る人」と「そこで従業・通学する人」に分け、前者は
+      メッシュの夜間人口、後者はメッシュの従業者数をウェイトに配分する。
+      ウェイトは市区町村内で正規化するので、市区町村ごとに合計すると公表昼間人口
+      （A6107）に一致する。
+      推計の限界: 従業者数のウェイトは平成28年経済センサス（A～R全産業、S公務を除く）で、
+      官公庁の集積と通学による流入は反映されない。買い物客・観光客は含まない
+      （公表昼間人口も同じ）。
+      mesh_code は同データセットの境界データ mesh_1km と同一体系で、
+      mesh_code = mesh_code で結合して地図化・空間集計できる。
+      出典: 総務省統計局 令和2年国勢調査／平成28年経済センサス‐活動調査
+      に関する地域メッシュ統計、社会・人口統計体系。
+      https://www.e-stat.go.jp/
+    access: public
+    config:
+      meta:
+        title: "1kmメッシュ別 昼間人口・夜間人口（推計）"
+        published: true
+        source_url: "https://www.e-stat.go.jp/"
+        tags: ["e-stat", "国勢調査", "経済センサス", "メッシュ", "昼間人口", "夜間人口", "GIS"]
+    columns:
+      - name: mesh_code
+        description: "3次メッシュコード（8桁）。境界データ mesh_1km の mesh_code と同一体系で結合できる"
+        meta:
+          title: メッシュコード
+      - name: city_code
+        description: "按分に使った市区町村コード（5桁）。メッシュ中心点が属する市区町村。中心点がどの町丁・字等にも入らないメッシュは NULL で、この場合 daytime_population = nighttime_population になる"
+        meta:
+          title: 市区町村コード
+      - name: nighttime_population
+        description: "夜間人口（人）。令和2年国勢調査の人口総数で、推計値ではなく実測値"
+        meta:
+          title: 夜間人口
+      - name: daytime_population
+        description: "昼間人口（人）。推計値。市区町村ごとに合計すると公表昼間人口（A6107）に一致する"
+        meta:
+          title: 昼間人口
+      - name: daytime_ratio
+        description: "昼夜間人口比率（％）。昼間人口÷夜間人口×100。夜間人口が0のメッシュは NULL"
+        meta:
+          title: 昼夜間人口比率
+      - name: daytime_night_diff
+        description: "昼夜間人口差（人）。昼間人口−夜間人口。正なら流入超過、負なら流出超過"
+        meta:
+          title: 昼夜間人口差
+      - name: employees
+        description: "従業者数（人）。平成28年経済センサス‐活動調査のA～R全産業（S公務を除く）。流入の按分ウェイトに使っている"
+        meta:
+          title: 従業者数
+      - name: establishments
+        description: "事業所数。平成28年経済センサス‐活動調査のA～R全産業（S公務を除く）"
+        meta:
+          title: 事業所数

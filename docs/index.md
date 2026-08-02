@@ -16,11 +16,11 @@ e-Stat（政府統計の総合窓口）の API と統計GIS から取得した�
 | ssds | 社会・人口統計体系。11分野 × 都道府県/市区町村 = 22テーブル + 指標定義 item_catalog |
 | cpi | 消費者物価指数 price_index |
 | main | 統計表カタログ stats_catalog |
-| census | 令和2年国勢調査 小地域集計 census_small_area_*（年齢・世帯・住宅・産業） |
+| census | 令和2年国勢調査 小地域集計 census_small_area_*（年齢・世帯・住宅・産業）、1kmメッシュ別昼間人口 daytime_population_mesh_1km |
 | boundary | 令和2年国勢調査 町丁・字等別境界 small_area、1kmメッシュ境界 mesh_1km |
 | code | 統計に用いる標準地域コード municipality と、その変更（廃置分合）履歴 municipality_change |
 
-11分野（A〜K）の詳細は各カテゴリのガイドを参照してください。市区町村より細かい粒度で見たいときは[小地域集計](/cookbook/e_stat/census)、地図に載せるときは[境界データ](/cookbook/e_stat/boundary)を参照してください。
+11分野（A〜K）の詳細は各カテゴリのガイドを参照してください。市区町村より細かい粒度で見たいときは[小地域集計](/cookbook/e_stat/census)、昼と夜で人の分布を見分けたいときは[1kmメッシュ別 昼間人口](/cookbook/e_stat/mesh-daytime)、地図に載せるときは[境界データ](/cookbook/e_stat/boundary)を参照してください。
 
 ## SSDS 共通のカラム構成
 
