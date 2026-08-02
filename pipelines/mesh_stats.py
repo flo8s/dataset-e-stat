@@ -86,6 +86,13 @@ def fetch_mesh_ids(
 
     Returns:
         条件に合致する statsDataId のリスト(配布単位である 1次メッシュの数だけ返る)。
+
+    Raises:
+        RuntimeError: API がエラーを返したとき、および条件に合致する表が 1 件も
+            無かったとき。0 件を返して呼び出し側に握らせると、e-Stat が表題を
+            変えたときにロードが黙って飛ばされ、dbt は前回ロード済みの
+            _source をそのまま使ってビルドに成功してしまう。CI が緑のまま
+            テーブルが更新されなくなるので、ここで落とす。
     """
     client = EstatApiClient(app_id=app_id, timeout=300)
     # searchKind=2 の 00200521 は約5,300表returned。既定の limit に頼らず明示する。
@@ -111,6 +118,14 @@ def fetch_mesh_ids(
         if _text(spec.get("TABLE_NAME")) != table_name:
             continue
         ids.append(t["@id"])
+
+    if not ids:
+        raise RuntimeError(
+            f"mesh_stats: no tables matched STATISTICS_NAME='{statistics_name}' / "
+            f"TABLE_NAME='{table_name}' in statsCode={stats_code} "
+            f"({len(tables)} tables scanned). "
+            "e-Stat 側の表題が変わった可能性がある。MESH_STATS_TABLES を確認する。"
+        )
 
     logger.info(f"mesh_stats: {len(ids)} tables for '{statistics_name}' / '{table_name}'")
     return ids

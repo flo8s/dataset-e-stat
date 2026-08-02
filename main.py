@@ -109,17 +109,16 @@ def main():
 
     # 8. 国勢調査・経済センサス 1kmメッシュ統計データ
     logger.info("8/9: mesh_stats (1kmメッシュ統計)")
+    # fetch_mesh_ids は 0 件のとき例外を投げる。表題が変わってロードが飛ばされても
+    # dbt は前回分でビルドが通ってしまい、CI が緑のままテーブルが更新されなくなるため。
     for spec in MESH_STATS_TABLES:
         ids = fetch_mesh_ids(
             app_id, spec["stats_code"], spec["statistics_name"], spec["table_name"]
         )
-        if ids:
-            info = pipeline.run(
-                create_mesh_source(app_id, ids, spec["name"], spec["primary_key"])
-            )
-            logger.info(f"  {spec['name']}: {info}")
-        else:
-            logger.info(f"  skip {spec['name']} (no tables)")
+        info = pipeline.run(
+            create_mesh_source(app_id, ids, spec["name"], spec["primary_key"])
+        )
+        logger.info(f"  {spec['name']}: {info}")
 
     # 9. dbt ビルド
     logger.info("9/9: dbt build")
