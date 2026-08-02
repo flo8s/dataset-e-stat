@@ -12,17 +12,12 @@ from typing import List, Optional
 
 from estat_api_dlt_helper import estat_source, estat_table
 from estat_api_dlt_helper.api.client import EstatApiClient
-from estat_api_dlt_helper.models import estat_models
 
 from pipelines import EstatStatus
-from pipelines.ssds import drop_stat_inf
 
-# estat-api-dlt-helper (<=0.3.1) は TABLE_INF.COLLECT_AREA を必須とするが、小地域統計
-# (searchKind=2) の getStatsData レスポンスはこのフィールドを持たず parse に失敗する。
-# upstream (udus122 fork fix/optional-collect-area) の修正がリリースされるまでの暫定対応として
-# collect_area を optional 化する。
-estat_models.TableInf.model_fields["collect_area"].default = None
-estat_models.TableInf.model_rebuild(force=True)
+# TABLE_INF の COLLECT_AREA 欠落に対応する互換パッチ。import した時点で当たる。
+from pipelines import estat_compat  # noqa: F401
+from pipelines.ssds import drop_stat_inf
 
 logger = logging.getLogger(__name__)
 
