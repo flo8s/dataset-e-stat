@@ -45,6 +45,11 @@ def _fetch(client: EstatApiClient, **kwargs) -> list[dict]:
         next_key = datalist.get("RESULT_INF", {}).get("NEXT_KEY")
         if not next_key:
             return tables
+        if int(next_key) <= start_position:
+            raise RuntimeError(
+                f"stats_list: NEXT_KEY {next_key} does not advance "
+                f"from startPosition {start_position}"
+            )
         start_position = int(next_key)
         logger.info(f"getStatsList: {len(tables)} tables, continuing from {next_key}")
 
