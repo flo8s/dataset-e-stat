@@ -60,6 +60,29 @@ J1102 のように「うち」項目だけが並んでいて親に届かない�
 合計行と行政区をどちらも含みます。市区町村単位で数えるときは
 `code.municipality` の `is_municipality` で絞ります。
 
+## 指標別の収録年（ssds.series_coverage）
+
+収録年は指標ごとに違います。毎年更新される系列と、国勢調査ベースで5年ごとの系列が
+同じテーブルに混在するため、テーブル全体の `MAX(year)` は「どこまで新しいか」の
+答えになりません。`a_pref_population` はテーブルとしては 2025 年まで入っていますが、
+2025 年に届く指標は 594 のうち 12 だけで、307 は 2020 年で止まります。
+
+`ssds.series_coverage` が指標ごとの収録年を持っています。22テーブル分をまとめた
+約 5,000 行の表で、22テーブルを走査せずに引けます。
+
+```sql
+SELECT table_name, cat01, item_name, min_year, max_year, year_count
+FROM e_stat.ssds.series_coverage
+WHERE table_name = 'c_municipal_economy'
+  AND cat01 IN ('C120110', 'C120120')
+```
+
+`year_count` が `max_year - min_year + 1` に満たなければ、その系列は年が飛んでいます。
+
+収録年は地域をまたいだ和です。`max_year` は「どこかの地域で」その年まで入っていることを
+表すので、地域を1つに絞って使うときは、その地域にその年の行があるかを別に確かめます
+（`c_municipal_economy` では199指標中114指標で最新年が地域ごとに違います）。
+
 ## 国勢調査 小地域集計（census スキーマ）
 
 令和2年国勢調査の町丁・字等別（小地域）集計です。area は同データセットの境界データ
