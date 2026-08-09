@@ -1,15 +1,5 @@
 version: 2
 
-_meta: &meta
-  source_url: "https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=A&toukeiCode=00200521&toukeiYear=2020&serveyId=A002005212020&coordsys=1&format=gml&datum=2011"
-  published: true
-  tags: ["e-stat", "国勢調査", "境界", "GIS", "小地域"]
-
-_mesh_meta: &mesh_meta
-  source_url: "https://www.e-stat.go.jp/gis/statmap-search?page=1&type=2&aggregateUnitForBoundary=S&coordsys=1&format=gml"
-  published: true
-  tags: ["e-stat", "メッシュ", "境界", "GIS", "地域メッシュ統計"]
-
 models:
   - name: small_area
     description: |
@@ -19,71 +9,37 @@ models:
       同一KEY_CODEに複数境界がある場合は代表(KIGO_E=E1)のみ残し、
       飛び地等の重複ポリゴン(E2以降)は除外済み。
     access: public
-    config:
-      meta:
-        <<: *meta
-        title: "町丁・字等別境界"
     columns:
       - name: key_code
         description: "図形と集計データのリンクコード（PREF + KEYCODE2）。町丁・字等が9桁、その内訳区画が11桁で、census スキーマ各表の area と同一体系。key_code = area で集計値と結合する（census 側にある5桁の市区町村行には対応する境界が無い）"
-        meta:
-          title: KEY_CODE
       - name: prefecture_code
         description: "都道府県コード（2桁）。key_code の先頭2桁と同じ"
-        meta:
-          title: 都道府県番号
       - name: prefecture_name
         description: "都道府県名"
-        meta:
-          title: 都道府県名
       - name: city_code
         description: "市区町村番号（3桁）。単独では一意にならず、prefecture_code と連結した5桁が標準地域コードになる（01 + 101 = 01101 札幌市中央区）"
-        meta:
-          title: 市区町村番号
       - name: city_name
         description: "市区町村名。政令指定都市は行政区名まで含む"
-        meta:
-          title: 市区町村名
       - name: area_name
         description: "町丁・字等の名称。市区町村名は含まない"
-        meta:
-          title: 町丁・字等名称
       - name: kigo_e
         description: "町丁・字等の重複フラグ。同一市区町村内に同一の町丁・字等番号を持つ境界が複数存在する場合、境界ごとの基本単位区（調査区）人口が多い順にE1から付与。人口が同じ場合は面積の広い順。島と陸地がある場合は陸地を優先。本モデルではE2以降を除外済み"
-        meta:
-          title: 特殊記号E
       - name: kigo_d
         description: "D=飛び地、D1=抜け地（飛び地）"
-        meta:
-          title: 特殊記号D
       - name: kigo_i
         description: "I=島"
-        meta:
-          title: 特殊記号I
       - name: jinko
         description: "当該町丁・字等の人口。元データではKIGO_E=En(n≧2)の場合は0"
-        meta:
-          title: 人口
       - name: setai
         description: "当該町丁・字等の世帯数。元データではKIGO_E=En(n≧2)の場合は0"
-        meta:
-          title: 世帯数
       - name: x_code
         description: "10進経度"
-        meta:
-          title: 図形中心点X座標
       - name: y_code
         description: "10進緯度"
-        meta:
-          title: 図形中心点Y座標
       - name: area_m2
         description: "図郭による算出値。公式面積とは一致しない"
-        meta:
-          title: 面積（㎡）
       - name: geometry
         description: "CRS: EPSG:4612 (JGD2011)"
-        meta:
-          title: 境界ポリゴン
 
   - name: mesh_1km
     description: |
@@ -92,28 +48,14 @@ models:
       メッシュコードで各種メッシュ統計と結合して地図化・空間集計に使う。
       収録は陸域を含む1次メッシュ176区画分。
     access: public
-    config:
-      meta:
-        <<: *mesh_meta
-        title: "1kmメッシュ境界"
     columns:
       - name: mesh_code
         description: "3次メッシュコード（8桁）。地域メッシュ統計の集計単位コードと同一体系"
-        meta:
-          title: メッシュコード
       - name: mesh1_code
         description: "上位区画である1次メッシュ（約80km四方）のコード（4桁）。配布単位でもある"
-        meta:
-          title: 1次メッシュコード
       - name: mesh2_code
         description: "1次メッシュ内の2次メッシュ（約10km四方）の位置（2桁）"
-        meta:
-          title: 2次メッシュ番号
       - name: mesh3_code
         description: "2次メッシュ内の3次メッシュ（約1km四方）の位置（2桁）"
-        meta:
-          title: 3次メッシュ番号
       - name: geometry
         description: "CRS: EPSG:4612"
-        meta:
-          title: メッシュポリゴン
