@@ -15,23 +15,43 @@ logger = logging.getLogger(__name__)
 
 CACHE_FILE = Path(".stats_list_cache.json")
 
+# 1 リクエストあたりの取得件数。全件（約 24 万件・400MB 弱）を 1 回で取りに行くと
+# 転送が e-Stat 側の応答時間の上限に届き、接続を切られる。
+PAGE_LIMIT = 50000
+
 
 def _fetch(client: EstatApiClient, **kwargs) -> list[dict]:
-    """getStatsList API を呼び、TABLE_INF のリストを返す。"""
-    result = client.get_stats_list(**kwargs)
+    """getStatsList API を NEXT_KEY で辿り、TABLE_INF のリストを全件返す。"""
+    tables: list[dict] = []
+    start_position = 1
 
-    stats_list = result.get("GET_STATS_LIST", {})
-    status = stats_list.get("RESULT", {}).get("STATUS")
-    if status not in (EstatStatus.OK, EstatStatus.PARTIAL):
-        error_msg = stats_list.get("RESULT", {}).get("ERROR_MSG", "Unknown error")
-        raise RuntimeError(f"stats_list: API error (status {status}): {error_msg}")
+    while True:
+        result = client.get_stats_list(
+            limit=PAGE_LIMIT, startPosition=start_position, **kwargs
+        )
 
-    datalist = stats_list.get("DATALIST_INF", {})
-    tables = datalist.get("TABLE_INF", [])
-    if isinstance(tables, dict):
-        tables = [tables]
+        stats_list = result.get("GET_STATS_LIST", {})
+        status = stats_list.get("RESULT", {}).get("STATUS")
+        if status not in (EstatStatus.OK, EstatStatus.PARTIAL):
+            error_msg = stats_list.get("RESULT", {}).get("ERROR_MSG", "Unknown error")
+            raise RuntimeError(f"stats_list: API error (status {status}): {error_msg}")
 
-    return tables
+        datalist = stats_list.get("DATALIST_INF", {})
+        page = datalist.get("TABLE_INF", [])
+        if isinstance(page, dict):
+            page = [page]
+        tables.extend(page)
+
+        next_key = datalist.get("RESULT_INF", {}).get("NEXT_KEY")
+        if not next_key:
+            return tables
+        if int(next_key) <= start_position:
+            raise RuntimeError(
+                f"stats_list: NEXT_KEY {next_key} does not advance "
+                f"from startPosition {start_position}"
+            )
+        start_position = int(next_key)
+        logger.info(f"getStatsList: {len(tables)} tables, continuing from {next_key}")
 
 
 def _load_cache(ttl_hours: int = 24) -> list[dict] | None:
