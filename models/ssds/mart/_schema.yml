@@ -1,6 +1,46 @@
 version: 2
 
 models:
+  - name: series_coverage
+    description: |
+      社会・人口統計体系（SSDS）22表の指標（cat01）ごとの収録年。
+      同じ表の中でも指標によって収録年が違うため、表全体の MAX(year) では
+      「どこまで新しいか」が分からない。それを指標単位で持つ。
+      収録年は地域をまたいだ和で、max_year は「どこかの地域で」その年まで
+      入っていることを表す。
+    access: public
+    config:
+      meta:
+        title: "指標別の収録年"
+        published: true
+        source_url: "https://www.e-stat.go.jp/statistics/00200502"
+        tags: ["e-stat", "社会・人口統計体系"]
+    columns:
+      - name: table_name
+        description: "ssds スキーマの表名（a_pref_population など）。この表と同じスキーマにある22表のいずれか"
+        meta:
+          title: テーブル名
+      - name: cat01
+        description: "統計指標の項目符号。各 mart テーブルの cat01 と同じ値。符号の定義は https://www.stat.go.jp/data/ssds/2.html"
+        meta:
+          title: 分類事項コード
+      - name: item_name
+        description: "cat01 に対応する指標名。参照元テーブルの item_name と同じ値"
+        meta:
+          title: 分類事項名
+      - name: min_year
+        description: "いずれかの地域に値が入っている最も古い年。地域をまたいだ和なので、地域を1つに絞ると始まりがこれより後になることがある。value が NULL の行（元データが「-」「X」）は数えない"
+        meta:
+          title: 収録開始年
+      - name: max_year
+        description: "いずれかの地域に値が入っている最も新しい年。地域をまたいだ和なので、地域を1つに絞るとこの年の行が無いことがある（c_municipal_economy では199指標中114指標で最新年が地域ごとに違う）。value が NULL の行（元データが「-」「X」）は数えない"
+        meta:
+          title: 収録終了年
+      - name: year_count
+        description: "いずれかの地域に値が入っている年の数。max_year - min_year + 1 と一致しない場合は年が飛んでいる（5年ごとの国勢調査ベースの系列など）"
+        meta:
+          title: 収録年数
+
   - name: item_catalog
     description: |
       社会・人口統計体系（SSDS）の基礎データ項目一覧。

@@ -13,7 +13,7 @@ e-Stat（政府統計の総合窓口）の API と統計GIS から取得した�
 
 | スキーマ | 内容 |
 |---------|------|
-| ssds | 社会・人口統計体系。11分野 × 都道府県/市区町村 = 22テーブル + 指標定義 item_catalog |
+| ssds | 社会・人口統計体系。11分野 × 都道府県/市区町村 = 22テーブル + 指標定義 item_catalog + 指標別の収録年 series_coverage |
 | cpi | 消費者物価指数 price_index |
 | main | 統計表カタログ stats_catalog |
 | census | 令和2年国勢調査 小地域集計 census_small_area_*（年齢・世帯・住宅・産業）、1kmメッシュ別昼間人口 daytime_population_mesh_1km |
