@@ -7,6 +7,13 @@ e_stat:
       database: e_stat
       schema: main
       threads: 1
+      # ビルドが公開ストレージを読むときの名乗り。queria run が
+      # queria-build として渡す。無いと data.queria.io の利用統計に
+      # 自分のビルドが利用者として混ざる。
+      # settings: ではなく config_options: — custom_user_agent は接続を開く
+      # ときにしか決められず、SET では変えられない
+      config_options:
+        custom_user_agent: "{{ env_var('QUERIA_USER_AGENT', '') }}"
       extensions:
         - httpfs
         - ducklake
