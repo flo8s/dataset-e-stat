@@ -17,6 +17,8 @@ keywords:
   - SSDS
   - 国勢調査
   - 小地域
+  - 市区町村
+  - 世帯
   - 消費者物価指数
   - 人口
   - 社会
@@ -54,6 +56,6 @@ schemas:
   - name: cpi
     title: 消費者物価指数
   - name: census
-    title: 国勢調査 小地域
+    title: 国勢調査
   - name: code
     title: 統計に用いる標準地域コード
