@@ -44,6 +44,8 @@ YEAR_LABEL = re.compile(r"^(明治|大正|昭和|平成|令和)(元|\d+)年(度)
 UNIT_LABELS = {"人", "世帯", "％", "%"}
 # 市区町村名の欄が空であることを示す記号。都道府県の行に入る。
 BLANK_MARKS = {"-", "－", "‐", "―", "─"}
+# 数値欄で「値が無い」ことを示す記号。*** は2024年の浜松市の再編前の区の行に入る。
+NO_VALUE_MARKS = BLANK_MARKS | {"…", "*", "**", "***", "x", "X"}
 CTRL_CHARS = re.compile(r"[\x00-\x1f\x7f]")
 # ファイル名の末尾が住民区分と地域粒度を示す。s/n/g = 総計/日本人住民/外国人住民、
 # t/s = 都道府県別/市区町村別。2012年以前は住民区分の接頭辞が無い。
@@ -130,21 +132,13 @@ MEASURES = [
 ]
 
 
-def _fetch(url: str) -> tuple[str, bytes]:
-    """再試行付きで URL を取得し、(ファイル名, 本文) を返す。
-
-    e-Stat のファイルダウンロードは URL に名前を持たず、Content-Disposition
-    でしか区別できない。名前が住民区分と地域粒度を決めるので本文と一緒に返す。
-    """
+def _fetch(url: str) -> tuple[bytes, str]:
+    """再試行付きで URL を取得し、(本文, Content-Disposition) を返す。"""
     for attempt in range(_MAX_RETRIES):
         try:
             req = Request(url, headers={"User-Agent": _UA})
             with urlopen(req, timeout=_TIMEOUT) as resp:
-                disposition = resp.headers.get("Content-Disposition", "")
-                body = resp.read()
-            m = re.search(r"filename\*=UTF-8''([^;]+)", disposition)
-            name = urllib.parse.unquote(m.group(1)) if m else ""
-            return name, body
+                return resp.read(), resp.headers.get("Content-Disposition", "")
         except (HTTPError, URLError) as e:
             transient = not isinstance(e, HTTPError) or e.code in _TRANSIENT_HTTP_CODES
             if not transient or attempt == _MAX_RETRIES - 1:
@@ -154,6 +148,25 @@ def _fetch(url: str) -> tuple[str, bytes]:
             logger.warning(f"  {reason}, retry in {wait}s ({attempt + 1}/{_MAX_RETRIES})")
             time.sleep(wait)
     raise RuntimeError("unreachable")
+
+
+def _download(url: str) -> tuple[str, bytes]:
+    """統計表ファイルを取得し、(ファイル名, 本文) を返す。
+
+    e-Stat のファイルダウンロード URL は名前を持たず、Content-Disposition でしか
+    区別できない。名前が住民区分と地域粒度を決めるので、取れなければ落とす。
+    黙って読み飛ばすと、その年が欠けたままビルドが通ってしまう。
+    """
+    body, disposition = _fetch(url)
+    m = re.search(r"filename\*=UTF-8''([^;]+)", disposition)
+    if m:
+        return urllib.parse.unquote(m.group(1)), body
+    m = re.search(r'filename="?([^";]+)"?', disposition)
+    if m:
+        return m.group(1).strip(), body
+    raise RuntimeError(
+        f"Content-Disposition からファイル名を取れない: {disposition!r} ({url})"
+    )
 
 
 def _catalog(app_id: str) -> list[tuple[int, str]]:
@@ -173,7 +186,7 @@ def _catalog(app_id: str) -> list[tuple[int, str]]:
                 "startPosition": start_position,
             }
         )
-        _, body = _fetch(f"{CATALOG_URL}?{params}")
+        body, _ = _fetch(f"{CATALOG_URL}?{params}")
         root = json.loads(body)["GET_DATA_CATALOG"]
         status = root["RESULT"]["STATUS"]
         if status not in (EstatStatus.OK, EstatStatus.PARTIAL):
@@ -225,13 +238,18 @@ def _label(value: object) -> str:
 
 
 def _number(value: object) -> int | None:
+    """数値セルを整数にする。値が無いことを示す記号は None、それ以外は落とす。
+
+    読めない表記を黙って None にすると、負号が △ や ▲ に変わった年に負値だけが
+    NULL になっても気づけない。値が無い記号だけを NULL とし、残りは落とす。
+    """
     s = _label(value).replace(",", "")
-    if not s or s in BLANK_MARKS or s in {"…", "*"}:
+    if not s or s in NO_VALUE_MARKS:
         return None
     try:
         return int(round(float(s)))
     except ValueError:
-        return None
+        raise RuntimeError(f"数値として読めないセル: {s!r}") from None
 
 
 def _classify(stem: str) -> tuple[str, str]:
@@ -315,6 +333,14 @@ def _parse(path: Path, resident_kind: str) -> list[dict]:
         pref_name = _text(row[index["pref_name"]])
         if not pref_name:
             # 集計対象の行は必ず都道府県名を持つ。持たない行から下は注記。
+            # ただし表の途中に空行が挟まると、ここで打ち切ると以降が黙って
+            # 消える。残りに都道府県名を持つ行があれば注記ではないので落とす。
+            rest = df.iloc[i + 1 :, index["pref_name"]].map(_text)
+            if (rest != "").any():
+                raise RuntimeError(
+                    f"{path.name}: {i + 1} 行目で都道府県名が空だが、"
+                    f"その下に {int((rest != '').sum())} 行のデータが残っている"
+                )
             break
 
         code = _label(row[index["lg_code"]])
@@ -361,10 +387,10 @@ def build_resident_registry(dest_dir: str, app_id: str) -> None:
 
     downloaded: list[tuple[int, str, str, Path]] = []
     for year, url in _catalog(app_id):
-        name, body = _fetch(url)
+        name, body = _download(url)
         # ダウンロード名は「【総計】市区町村別… 26ssjin.xlsx」の形。末尾の
         # 短い名前だけが住民区分と地域粒度を持つ。
-        short = name.split()[-1] if name else ""
+        short = name.split()[-1]
         stem = Path(short).stem
         if not stem.endswith("jin"):
             continue  # 年齢階級別 (nen)・参考資料は扱わない
