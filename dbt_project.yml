@@ -31,3 +31,8 @@ models:
         +materialized: table
       stg:
         +materialized: table
+    resident_registry:
+      raw:
+        +materialized: table
+      stg:
+        +materialized: table
