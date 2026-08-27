@@ -130,9 +130,7 @@ def main():
 
     # 9. 国勢調査 市区町村・都道府県別 基本集計
     logger.info("9/11: census_municipality (市区町村・都道府県別 基本集計)")
-    ids = fetch_municipality_ids(
-        app_id, [spec["table_no"] for spec in MUNICIPALITY_TABLES]
-    )
+    ids = fetch_municipality_ids(app_id, MUNICIPALITY_TABLES)
     info = pipeline.run(create_municipality_source(app_id, ids))
     logger.info(f"  {info}")
 
