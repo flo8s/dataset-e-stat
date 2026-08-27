@@ -173,6 +173,71 @@ LIMIT 10;
 
 出典: 総務省統計局 令和2年国勢調査 人口等基本集計。https://www.e-stat.go.jp/
 
+## 国勢調査 市区町村別 就業状態等基本集計（census スキーマ）
+
+令和2年国勢調査 就業状態等基本集計から、市区町村・都道府県の粒度で労働力状態と
+従業上の地位を取った2表です。どちらも縦持ちで、年齢は総数のみです。
+
+| テーブル | 内容 | 区分の列 | 値 |
+|---------|------|---------|----|
+| census_municipality_labor_force | 男女・労働力状態別 15歳以上人口 | labor_status_code / labor_status | 人口 |
+| census_municipality_employment_status | 男女・従業上の地位別 就業者数 | employment_status_code / employment_status | 就業者数 |
+
+area は census_municipality と同じ標準地域コード（5桁）で、2000年（平成12年）市区町村の
+再掲を除いた1,965地域です。粒度は area_level で判別します。
+
+| area_level | 内容 | 地域数 | 15歳以上人口の合計 |
+|-----------|------|-------:|------------------:|
+| national | 全国 | 1 | 108,258,569 |
+| prefecture | 都道府県 | 47 | 108,258,569 |
+| city | 市・特別区部 | 793 | 99,161,646 |
+| town_village | 町村 | 926 | 9,096,923 |
+| ward | 政令指定都市の区・特別区 | 198 | 31,968,922 |
+
+区分は総数・大区分・その内訳が同じ列に縦に並びます。深さは labor_status_level /
+employment_status_level に出ていて、絞らずに合計すると何重にも数えます。男女
+（sex_code）も総数・男・女が同じ列に並ぶので、併せて絞ります。
+
+```sql
+-- 市区町村別の労働力率（労働力人口 ÷ 15歳以上人口）
+SELECT
+    area_name,
+    MAX(value) FILTER (WHERE labor_status_code = '1')
+        / MAX(value) FILTER (WHERE labor_status_code = '0') AS labor_force_rate
+FROM e_stat.census.census_municipality_labor_force
+WHERE sex_code = '0' AND area_level IN ('city', 'town_village')
+GROUP BY area, area_name
+ORDER BY labor_force_rate DESC
+LIMIT 10;
+```
+
+従業上の地位には「（再掲）雇用者（役員を含む）」があり、level は大区分と同じ 1 です。
+合計するときは is_reprint = false も併せて絞ります。
+
+```sql
+-- 市区町村別の非正規雇用の割合（派遣社員 + パート・アルバイト ÷ 雇用者）
+SELECT
+    area,
+    area_name,
+    SUM(value) FILTER (WHERE employment_status_code IN ('12', '13'))
+        / SUM(value) FILTER (WHERE employment_status_code = '1') AS nonregular_share
+FROM e_stat.census.census_municipality_employment_status
+WHERE sex_code = '0' AND area_level IN ('city', 'town_village')
+GROUP BY area, area_name
+ORDER BY nonregular_share DESC
+LIMIT 10;
+```
+
+census_municipality_employment_status の総数は、census_municipality_labor_force の
+就業者（labor_status_code = '11'）と全行で一致します。
+
+原典が「-」の区分は NULL です。内訳の合計が総数と一致することから、「-」は該当者が
+いない（0人）ことを表します。全町避難が続いた双葉町だけは全行が「-」で、全項目が
+NULL になります。
+
+出典: 総務省統計局 令和2年国勢調査 就業状態等基本集計（第1-2-1表・第3-2表）。
+https://www.e-stat.go.jp/
+
 ## 1kmメッシュ別 昼間人口（census スキーマ）
 
 | テーブル | 内容 | 主なカラム |

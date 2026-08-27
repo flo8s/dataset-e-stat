@@ -12,5 +12,7 @@ sources:
       - name: census_municipality_population
       - name: census_municipality_household
       - name: census_municipality_change
+      - name: census_municipality_labor_force
+      - name: census_municipality_employment_status
       - name: mesh_population
       - name: mesh_establishment

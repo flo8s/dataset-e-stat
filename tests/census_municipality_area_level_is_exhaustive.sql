@@ -1,4 +1,4 @@
--- census_municipality の area_level が全行に付いていることを検証する。
+-- 市区町村・都道府県別の集計で area_level が全行に付いていることを検証する。
 -- 結果が0行ならテスト成功。行が返る場合、e-Stat が想定外の level を配り始めている。
 --
 -- 小地域の area_level が桁数から導けるのに対し、市区町村・都道府県の area は
@@ -6,6 +6,15 @@
 -- 新しい level が増えると CASE がどれにも当たらず NULL が混ざるが、行数も値も
 -- 変わらないので黙って通ってしまう。ここで落とす。
 
-SELECT area, area_name, area_level
-FROM {{ ref('census_municipality') }}
+{% set municipality_marts = [
+    'census_municipality',
+    'census_municipality_labor_force',
+    'census_municipality_employment_status'
+] %}
+
+{% for mart in municipality_marts %}
+SELECT '{{ mart }}' AS model_name, area, area_name, area_level
+FROM {{ ref(mart) }}
 WHERE area_level IS NULL
+{% if not loop.last %}UNION ALL{% endif %}
+{% endfor %}
