@@ -22,6 +22,8 @@ keywords:
   - 消費者物価指数
   - 住民基本台帳
   - 人口動態
+  - 経済センサス
+  - 事業所
   - 人口
   - 社会
 homepage: https://github.com/queria-io/dataset-e-stat
@@ -65,3 +67,5 @@ schemas:
     title: 統計に用いる標準地域コード
   - name: resident_registry
     title: 住民基本台帳に基づく人口・世帯数
+  - name: economic_census
+    title: 経済センサス‐活動調査

@@ -33,3 +33,20 @@ CASE {{ metadata_column }}->>'$.level'
     WHEN '7' THEN 'former_municipality'
 END
 {% endmacro %}
+
+{# 経済センサスの産業横断的集計は area の level の振り方が国勢調査と違う。
+   全国と都道府県が同じ level=1 で、level=2 が市・特別区部・町村、level=3 が
+   政令指定都市の行政区・特別区・境界未定地域にあたる。
+   日本全域をちょうど1回覆うのは level=1 の都道府県だけ、または level=2 の全部で、
+   level=3 は level=2 の内訳。特別区は level=3 で、その親「特別区部」(13100) が
+   level=2 に立つため、level=2 だけを取れば東京も1回だけ数えられる。 #}
+{% macro e_stat_economic_census_area_level(code_column, metadata_column) %}
+CASE
+    WHEN {{ code_column }} = '00000' THEN 'national'
+    ELSE CASE {{ metadata_column }}->>'$.level'
+        WHEN '1' THEN 'prefecture'
+        WHEN '2' THEN 'municipality'
+        WHEN '3' THEN 'ward'
+    END
+END
+{% endmacro %}

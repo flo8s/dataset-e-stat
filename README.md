@@ -261,6 +261,83 @@ https://www.e-stat.go.jp/
 出典: 総務省統計局 令和2年国勢調査／平成28年経済センサス‐活動調査に関する地域メッシュ統計、
 社会・人口統計体系。https://www.e-stat.go.jp/
 
+## 経済センサス 産業大分類別の事業所数・従業者数・売上金額（economic_census スキーマ）
+
+| テーブル | 内容 | 主なカラム |
+|---------|------|-----------|
+| establishment_industry | 全国・都道府県・市区町村別、産業大分類別・経営組織別の民営事業所数・従業者数・売上（収入）金額 | area / industry_code / organization_code / establishments / employees / sales_million_yen |
+
+令和3年経済センサス‐活動調査（2021年6月1日現在）の産業横断的集計「売上（収入）金額等」
+第2-1表です。国勢調査の census_small_area_industry が常住地ベース（住民がどの産業で働くか）
+なのに対し、こちらは従業地ベース（事業所がどの産業か）です。
+
+事業所数の母数がほかの表と違います。全国・全産業の事業所数は 4,870,898 で、事業所に関する
+集計の民営事業所数 5,156,063 とは一致しません。売上（収入）金額等の集計は必要な事項の数値が
+得られた事業所だけを対象にするためで、ほかの統計表の事業所数と突き合わせる用途には
+使えません。
+
+### 総数と内訳
+
+総数と内訳が同じ列に縦に並ぶ軸が3つあります。絞らずに合計すると何重にも数えます。
+
+産業（industry_code）の深さは industry_level に出ています。重複なく全産業を覆うのは
+AB（農林漁業）と industry_level = 2 の16区分を合わせた17区分で、その和が AR（全産業）に
+一致します。
+
+経営組織（organization_code）は 0（総数）= 1（個人）+ 2（会社）+ 3（会社以外の法人）です。
+S1・S2 は内数の別掲なので is_reprint で落とします。
+
+地域（area）は area_level で判別します。
+
+| area_level | 内容 | 地域数 | 事業所数の合計 |
+|-----------|------|-------:|--------------:|
+| national | 全国 | 1 | 4,870,898 |
+| prefecture | 都道府県 | 47 | 4,870,898 |
+| municipality | 市・町村・特別区部 | 1,719 | 4,870,898 |
+| ward | 政令指定都市の行政区・特別区・境界未定地域 | 199 | 1,537,160 |
+
+特別区は ward に入り、その親「特別区部」（13100）が municipality に立ちます。特別区部には
+23区のほかに境界未定地域（13199）も含まれます。
+
+```sql
+-- 全国の産業別 事業所数・従業者数（重複なく数える17区分）
+SELECT industry_code, industry_name, establishments, employees
+FROM e_stat.economic_census.establishment_industry
+WHERE area = '00000' AND organization_code = '0'
+  AND (industry_code = 'AB' OR industry_level = 2)
+ORDER BY establishments DESC;
+```
+
+### 売上（収入）金額が無い産業
+
+売上（収入）金額は産業によって調査されておらず、建設業・電気ガス熱供給水道業・
+情報通信業・運輸業郵便業・金融業保険業・教育学習支援業・複合サービス事業・
+サービス業（他に分類されないもの）は NULL です。内訳の一部が欠けるため、全産業（AR）と
+非農林漁業（CR）の売上も NULL になります。事業所数と従業者数は全産業で揃っています。
+
+原典が区分ごとに丸めているため、売上（収入）金額は内訳の和が総数と最大1百万円ずれる
+産業があります。
+
+1事業所当たり売上（収入）金額と従業者1人当たり売上（収入）金額は、この表の事業所数・
+従業者数で割り直した値とは一致しません（原典の分母が違い、両方が揃う約6.1万行のうち
+一致するのは1.4万行未満です）。1事業所当たり従業者数は従業者数÷事業所数に一致します。
+
+```sql
+-- 市区町村別 卸売業，小売業の従業者1人当たり売上（万円）
+SELECT area_name, employees, sales_per_employee_10k_yen
+FROM e_stat.economic_census.establishment_industry
+WHERE industry_code = 'I' AND organization_code = '0'
+  AND area_level = 'municipality' AND employees >= 10000
+ORDER BY sales_per_employee_10k_yen DESC
+LIMIT 10;
+```
+
+原典が「-」（該当数字なし）・「･･･」（調査していないもの）・「X」（秘匿）の区分は NULL に
+なり、3つの意味は区別できません。
+
+出典: 総務省・経済産業省 令和3年経済センサス‐活動調査 事業所に関する集計
+産業横断的集計 売上（収入）金額等（第2-1表）。https://www.e-stat.go.jp/
+
 ## 統計に用いる標準地域コード（code スキーマ）
 
 都道府県・市区町村を 5 桁で表す「統計に用いる標準地域コード」の現行一覧と、
