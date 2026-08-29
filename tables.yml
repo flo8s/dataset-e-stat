@@ -119,3 +119,29 @@ tables:
     statsDataId: "0003427113"
     merge_keys: [tab, cat01, area, time]
     incremental: true
+
+  # 家計調査 家計収支編 二人以上の世帯（品目分類 2025年改定）
+  # 2025年改定の表は 1985年1月まで遡って組み替えられているので、旧改定（平成17/22/27年・
+  # 2020年）の表を併せて取る必要はない。月次表と年次表で時間軸コードが衝突しないため、
+  # 同じスキーマに積んで frequency で分けている。
+  - name: household_expenditure_monthly
+    description: 家計調査 品目別支出金額（月次・全国および都道府県庁所在市等53地域）
+    statsDataId: "0004023601"
+    merge_keys: [tab, cat01, cat02, area, time]
+    incremental: true
+  - name: household_expenditure_annual
+    description: 家計調査 品目別支出金額（年次・全国および都道府県庁所在市等53地域）
+    statsDataId: "0004023605"
+    merge_keys: [tab, cat01, cat02, area, time]
+    incremental: true
+  # 数量は月次が全国のみで、都道府県庁所在市別は年次にしか無い。
+  - name: household_quantity_monthly
+    description: 家計調査 品目別購入数量（月次・全国のみ）
+    statsDataId: "0004023602"
+    merge_keys: [tab, cat01, cat02, area, time]
+    incremental: true
+  - name: household_quantity_annual
+    description: 家計調査 品目別購入数量（年次・全国および都道府県庁所在市等53地域）
+    statsDataId: "0004023606"
+    merge_keys: [tab, cat01, cat02, area, time]
+    incremental: true

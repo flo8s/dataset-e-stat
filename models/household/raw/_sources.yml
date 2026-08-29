@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: estat_source
+    database: e_stat
+    schema: _source
+    tables:
+      - name: household_expenditure_monthly
+      - name: household_expenditure_annual
+      - name: household_quantity_monthly
+      - name: household_quantity_annual
