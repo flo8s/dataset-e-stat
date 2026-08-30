@@ -20,6 +20,9 @@ keywords:
   - 市区町村
   - 世帯
   - 消費者物価指数
+  - 家計調査
+  - 家計
+  - 消費支出
   - 住民基本台帳
   - 人口動態
   - 経済センサス
@@ -41,6 +44,8 @@ sources:
     path: https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
   - title: 住民基本台帳に基づく人口、人口動態及び世帯数（総務省）
     path: https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html
+  - title: 家計調査（総務省統計局）
+    path: https://www.stat.go.jp/data/kakei/
 
 contributors:
   - title: 総務省統計局
@@ -69,3 +74,5 @@ schemas:
     title: 住民基本台帳に基づく人口・世帯数
   - name: economic_census
     title: 経済センサス‐活動調査
+  - name: household
+    title: 家計調査
