@@ -1,0 +1,20 @@
+SELECT
+    frequency,
+    sex_code,
+    sex,
+    indicator_code,
+    indicator,
+    age_class_code,
+    age_class,
+    age_class_level,
+    age_class_parent,
+    area,
+    area_name,
+    time,
+    time_name,
+    year,
+    month,
+    quarter,
+    unit,
+    value
+FROM {{ ref('stg_labor_force_rate') }}

@@ -145,3 +145,31 @@ tables:
     statsDataId: "0004023606"
     merge_keys: [tab, cat01, cat02, area, time]
     incremental: true
+
+  # 労働力調査 基本集計
+  # 全国は月次（1968年1月～）、地域ブロック別は四半期（2000年1-3月期～）で表が分かれる。
+  # 時間軸コードは月次が YYYY00MMMM、四半期が YYYY00MMMM（期首月・期末月）で
+  # 衝突しないため、同じスキーマに積んで frequency で分けている。
+  # 実数（万人）と率（％）は別表なので、mart も別にする。
+  - name: labor_force_monthly
+    description: 労働力調査 基本集計 就業状態，年齢階級別15歳以上人口（全国・月次）
+    statsDataId: "0002060002"
+    merge_keys: [tab, cat01, cat02, cat03, cat04, area, time]
+    incremental: true
+  - name: labor_force_rate_monthly
+    description: 労働力調査 基本集計 年齢階級別労働力人口比率，就業率及び完全失業率（全国・月次）
+    statsDataId: "0002060004"
+    merge_keys: [tab, cat01, cat02, cat03, cat04, area, time]
+    incremental: true
+  # 地域ブロック別は cat の並びが全国表と違う（cat01=性別・cat02=年齢階級）。
+  # 産業の軸を持たないので merge キーも1つ少ない。
+  - name: labor_force_regional_quarterly
+    description: 労働力調査 基本集計 就業状態，年齢階級別15歳以上人口（地域別・四半期）
+    statsDataId: "0003009572"
+    merge_keys: [tab, cat01, cat02, cat03, area, time]
+    incremental: true
+  - name: labor_force_rate_regional_quarterly
+    description: 労働力調査 基本集計 年齢階級別労働力人口比率，就業率及び完全失業率（地域別・四半期）
+    statsDataId: "0003009576"
+    merge_keys: [tab, cat01, cat02, cat03, area, time]
+    incremental: true

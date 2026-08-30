@@ -1,0 +1,23 @@
+SELECT
+    frequency,
+    industry_code,
+    industry_name,
+    sex_code,
+    sex,
+    labor_status_code,
+    labor_status,
+    labor_status_level,
+    age_class_code,
+    age_class,
+    age_class_level,
+    age_class_parent,
+    area,
+    area_name,
+    time,
+    time_name,
+    year,
+    month,
+    quarter,
+    unit,
+    value
+FROM {{ ref('stg_labor_force') }}

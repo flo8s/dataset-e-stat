@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: estat_source
+    database: e_stat
+    schema: _source
+    tables:
+      - name: labor_force_monthly
+      - name: labor_force_rate_monthly
+      - name: labor_force_regional_quarterly
+      - name: labor_force_rate_regional_quarterly

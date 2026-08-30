@@ -23,6 +23,10 @@ keywords:
   - 家計調査
   - 家計
   - 消費支出
+  - 労働力調査
+  - 労働
+  - 就業
+  - 完全失業率
   - 住民基本台帳
   - 人口動態
   - 経済センサス
@@ -46,6 +50,8 @@ sources:
     path: https://www.soumu.go.jp/main_sosiki/jichi_gyousei/daityo/jinkou_jinkoudoutai-setaisuu.html
   - title: 家計調査（総務省統計局）
     path: https://www.stat.go.jp/data/kakei/
+  - title: 労働力調査（総務省統計局）
+    path: https://www.stat.go.jp/data/roudou/
 
 contributors:
   - title: 総務省統計局
@@ -76,3 +82,5 @@ schemas:
     title: 経済センサス‐活動調査
   - name: household
     title: 家計調査
+  - name: labor
+    title: 労働力調査
